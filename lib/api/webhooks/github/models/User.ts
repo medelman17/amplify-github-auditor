@@ -13,7 +13,7 @@ import {
   CreateGitHubUserInput,
   CreateGitHubUserMutation,
   GitHubUser,
-} from "@/amplify/API";
+} from "../../../../amplify/API";
 
 export class User {
   user: GitHubUser | null;

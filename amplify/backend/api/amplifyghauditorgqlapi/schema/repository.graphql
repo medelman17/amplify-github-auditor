@@ -1,0 +1,10 @@
+type GitHubRepository @model {
+  id: ID!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+  nodeId: String!
+  name: String!
+  fullName: String!
+  htmlUrl: AWSURL!
+  description: String!
+}

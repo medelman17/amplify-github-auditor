@@ -1,0 +1,26 @@
+{
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-amplifygithubauditor-dev-194031-authRole",
+      "UnauthRoleArn": "arn:aws:iam::728134986050:role/amplify-amplifygithubauditor-dev-194031-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::728134986050:role/amplify-amplifygithubauditor-dev-194031-authRole",
+      "Region": "us-east-1",
+      "DeploymentBucketName": "amplify-amplifygithubauditor-dev-194031-deployment",
+      "UnauthRoleName": "amplify-amplifygithubauditor-dev-194031-unauthRole",
+      "StackName": "amplify-amplifygithubauditor-dev-194031",
+      "StackId": "arn:aws:cloudformation:us-east-1:728134986050:stack/amplify-amplifygithubauditor-dev-194031/d0d88020-940c-11eb-afaf-1264a8f6165d",
+      "AmplifyAppId": "d3pcmggpbadzlx"
+    },
+    "categories": {
+      "hosting": {
+        "amplifyhosting": {
+          "appId": "d3pcmggpbadzlx",
+          "type": "cicd"
+        }
+      },
+      "auth": {
+        "amplifygithubauditor51669588": {}
+      }
+    }
+  }
+}

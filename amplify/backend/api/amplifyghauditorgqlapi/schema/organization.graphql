@@ -1,0 +1,10 @@
+type GitHubOrganization @model @key(fields: ["id", "login"]) {
+  id: ID!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+  login: String!
+  nodeId: String!
+  apiUrl: AWSURL!
+  avatar: AWSURL
+  email: AWSEmail
+}

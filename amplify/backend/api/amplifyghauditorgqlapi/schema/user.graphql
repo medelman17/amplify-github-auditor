@@ -1,0 +1,13 @@
+type GitHubUser @model @key(fields: ["id", "login"]) @aws_api_key {
+  id: ID!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+  login: String!
+  nodeId: String!
+  apiUrl: AWSURL!
+  htmlUrl: AWSURL!
+  avatar: AWSURL
+  name: String
+  company: String
+  email: AWSEmail
+}

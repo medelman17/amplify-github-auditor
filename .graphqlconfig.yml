@@ -1,0 +1,16 @@
+projects:
+  amplifyghauditorgqlapi:
+    schemaPath: src/graphql/schema.json
+    includes:
+      - lib/graphql/**/*.ts
+    excludes:
+      - ./amplify/**
+    extensions:
+      amplify:
+        codeGenTarget: typescript
+        generatedFileName: lib/amplify/API.ts
+        docsFilePath: lib/graphql
+        maxDepth: 2
+extensions:
+  amplify:
+    version: 3

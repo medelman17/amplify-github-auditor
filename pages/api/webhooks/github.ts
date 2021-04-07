@@ -5,9 +5,8 @@ import { webhookMiddleware } from "@/api/webhooks/github";
 
 const cors = Cors();
 
-const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  await runMiddleware(req, res, cors);
+export default async (req: NextApiRequest, res: NextApiResponse) => {
   await runMiddleware(req, res, webhookMiddleware);
+  await runMiddleware(req, res, cors);
+  res.json({ msg: "OK" });
 };
-
-export default handler;

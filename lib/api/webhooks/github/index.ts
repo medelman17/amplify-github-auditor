@@ -1,7 +1,7 @@
 import { Webhooks, createNodeMiddleware } from "@octokit/webhooks";
 import * as Handlers from "./handlers";
 
-const GITHUB_SECRET = process.env.GITHUB_SECRET!;
+const GITHUB_SECRET = "2jWWv53mI1FFjNwBJQN9avcZf6Vzneo1TsWNtOA1";
 
 const webhook = new Webhooks({ secret: GITHUB_SECRET });
 

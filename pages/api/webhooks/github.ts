@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import Cors from "cors";
-import { runMiddleware } from "@/api/utils";
-import { webhookMiddleware } from "@/api/webhooks/github";
+import { runMiddleware } from "../../../lib/api";
+import { webhookMiddleware } from "../../../lib/api/webhooks/github";
 
 const cors = Cors();
 

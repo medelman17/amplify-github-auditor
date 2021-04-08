@@ -1,4 +1,4 @@
-type GitHubRepository @model {
+type GitHubRepository @model @aws_api_key {
   id: ID!
   createdAt: AWSDateTime!
   updatedAt: AWSDateTime!
@@ -9,8 +9,12 @@ type GitHubRepository @model {
 
   apiUrl: AWSURL!
   htmlUrl: AWSURL!
-  gitUrl: AWSURL!
-  sshUrl: AWSURL!
+  gitUrl: String!
+  sshUrl: String!
+
+  stars: [GitHubStar] @connection(keyName: "byRepository", fields: ["id"])
+  teams: [GitHubTeamRepository]
+    @connection(keyName: "byRepository", fields: ["id"])
 
   issues: [GitHubIssue] @connection(fields: ["id"])
   pullRequests: [GitHubPullRequest] @connection(fields: ["id"])

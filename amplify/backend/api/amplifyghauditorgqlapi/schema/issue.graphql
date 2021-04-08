@@ -1,4 +1,7 @@
-type GitHubIssue @model @aws_api_key {
+type GitHubIssue
+  @model
+  @key(name: "byUser", fields: ["authorId"])
+  @aws_api_key {
   id: ID!
   createdAt: AWSDateTime!
   updatedAt: AWSDateTime!
@@ -13,12 +16,15 @@ type GitHubIssue @model @aws_api_key {
 
   closedAt: AWSDateTime
 
-  authorId: ID!
-  author: GitHubUser! @connection(fields: ["authorId"])
-  repositoryId: ID!
-  repository: GitHubRepository! @connection(fields: ["repositoryId"])
+  authorId: ID
+  author: GitHubUser @connection(fields: ["authorId"])
+  repositoryId: ID
+  repository: GitHubRepository @connection(fields: ["repositoryId"])
 
   assignees: [IssueAsignee] @connection(keyName: "byIssue", fields: ["id"])
+
+  labels: [GitHubLabelIssueConnection]
+    @connection(keyName: "byIssue", fields: ["id"])
 }
 
 enum GitHubIssueState {

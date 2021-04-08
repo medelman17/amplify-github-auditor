@@ -1,4 +1,11 @@
-type GitHubUser @model @key(fields: ["id", "login"]) @aws_api_key {
+type GitHubUser
+  @model
+  @key(
+    name: "byGitHubLogin"
+    fields: ["login"]
+    queryField: "userByGitHubLogin"
+  )
+  @aws_api_key {
   id: ID!
   createdAt: AWSDateTime!
   updatedAt: AWSDateTime!
@@ -11,7 +18,9 @@ type GitHubUser @model @key(fields: ["id", "login"]) @aws_api_key {
   company: String
   email: AWSEmail
 
-  issuesAuthored: [GitHubIssue] @connection(fields: ["id"])
+  teams: [GitHubTeamMembership] @connection(keyName: "byUser", fields: ["id"])
+
+  issuesAuthored: [GitHubIssue] @connection(keyName: "byUser", fields: ["id"])
   issuesAssigned: [IssueAsignee] @connection(keyName: "byUser", fields: ["id"])
 
   pullRequestsAuthored: [GitHubPullRequest] @connection(fields: ["id"])
@@ -23,6 +32,46 @@ type GitHubUser @model @key(fields: ["id", "login"]) @aws_api_key {
   reviewRequestsAssigned: [PullRequestReviewRequest]
     @connection(keyName: "byReviewer", fields: ["id"])
 }
+
+type User
+  @model
+  @key(
+    name: "byGitHubLogin"
+    fields: ["login"]
+    queryField: "userByGitHubLoginFML"
+  )
+  @aws_api_key {
+  id: ID!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+  login: String!
+}
+
+# type GitHubUser @model @key(fields: ["id", "login"]) @aws_api_key {
+#   id: ID!
+#   createdAt: AWSDateTime!
+#   updatedAt: AWSDateTime!
+#   login: String!
+#   nodeId: String!
+#   apiUrl: AWSURL!
+#   htmlUrl: AWSURL!
+#   avatar: AWSURL
+#   name: String
+#   company: String
+#   email: AWSEmail
+
+#   issuesAuthored: [GitHubIssue] @connection(fields: ["id"])
+#   issuesAssigned: [IssueAsignee] @connection(keyName: "byUser", fields: ["id"])
+
+#   pullRequestsAuthored: [GitHubPullRequest] @connection(fields: ["id"])
+#   pullRequestsAssigned: [PullRequestAsignee]
+#     @connection(keyName: "byUser", fields: ["id"])
+
+#   reviewRequestsAuthored: [PullRequestReviewRequest]
+#     @connection(keyName: "byRequester", fields: ["id"])
+#   reviewRequestsAssigned: [PullRequestReviewRequest]
+#     @connection(keyName: "byReviewer", fields: ["id"])
+# }
 
 type PullRequestReviewRequest
   @model

@@ -5,8 +5,8 @@ export const issueEventHandler: HandlerFunction<"issues", unknown> = async ({
   payload,
 }) => {
   const sender = await Models.User.fromEvent(payload.sender);
-
   const issue = await Models.Issue.fromEvent(payload.issue);
+  const author = await Models.User.fromEvent(payload.issue.user);
   const repository = await Models.Repository.fromEvent(payload.repository);
   await issue.attach(repository);
 

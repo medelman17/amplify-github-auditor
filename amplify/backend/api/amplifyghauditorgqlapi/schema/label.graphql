@@ -1,0 +1,30 @@
+type GitHubLabel @model @aws_api_key {
+  id: ID!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+  apiUrl: AWSURL!
+  name: String!
+  color: String!
+  default: Boolean
+
+  issues: [GitHubLabelIssueConnection]
+    @connection(keyName: "byLabel", fields: ["id"])
+}
+
+type GitHubLabelIssueConnection
+  @model
+  @key(name: "byIssue", fields: ["issueId", "labelId", "createdAt"])
+  @key(name: "byLabel", fields: ["labelId", "issueId", "createdAt"])
+  @aws_api_key {
+  id: ID!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+
+  dateFrom: AWSDateTime!
+  dateTo: AWSDateTime
+
+  issueId: ID!
+  issue: GitHubIssue! @connection(fields: ["issueId"])
+  labelId: ID!
+  label: GitHubLabel! @connection(fields: ["labelId"])
+}

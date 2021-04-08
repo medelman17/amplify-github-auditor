@@ -20,7 +20,7 @@ async function getGitHubRepositoryFromWebhookEvent(e: RepositoryEvent) {
   const vars: GetGitHubRepositoryQueryVariables = { id: e.id.toString() };
   try {
     const result = (await API.graphql(
-      graphqlOperation(queries.getGitHubIssue, vars)
+      graphqlOperation(queries.getGitHubRepository, vars)
     )) as GraphQLResult<GetGitHubRepositoryQuery>;
     return result.data.getGitHubRepository;
   } catch (err) {
@@ -42,7 +42,7 @@ async function createGitHubRepositoryFromWebhookEvent(e: RepositoryEvent) {
   };
   try {
     const result = (await API.graphql(
-      graphqlOperation(mutations.createGitHubIssue, input)
+      graphqlOperation(mutations.createGitHubRepository, { input })
     )) as GraphQLResult<CreateGitHubRepositoryMutation>;
     return result.data.createGitHubRepository;
   } catch (err) {
@@ -53,7 +53,7 @@ async function createGitHubRepositoryFromWebhookEvent(e: RepositoryEvent) {
 async function updateGitHubRepository(i: UpdateGitHubRepositoryInput) {
   try {
     const result = (await API.graphql(
-      graphqlOperation(mutations.updateGitHubIssue, i)
+      graphqlOperation(mutations.updateGitHubRepository, i)
     )) as GraphQLResult<UpdateGitHubRepositoryMutation>;
     return result.data.updateGitHubRepository;
   } catch (err) {
@@ -66,13 +66,17 @@ export class Repository {
 
   static async fromEvent(e: RepositoryEvent) {
     try {
+      console.log(`Checking for Repository with ID: ${e.id}`);
       let repository = await getGitHubRepositoryFromWebhookEvent(e);
       if (repository === null) {
+        console.log(`Repository with ID: ${e.id} Not Found; Creating`);
         repository = await createGitHubRepositoryFromWebhookEvent(e);
+        console.log(`Repository with ID: ${e.id} Created`);
       }
+      console.log(`Repository with ID: ${e.id} Found; Returning`);
       return new Repository(repository);
     } catch (err) {
-      console.log(err);
+      throw err;
     }
   }
 

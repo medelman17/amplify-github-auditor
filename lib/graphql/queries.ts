@@ -48,6 +48,9 @@ export const getGitHubIssue = /* GraphQL */ `
       assignees {
         nextToken
       }
+      labels {
+        nextToken
+      }
     }
   }
 `;
@@ -78,30 +81,99 @@ export const listGitHubIssues = /* GraphQL */ `
     }
   }
 `;
-export const getTodo = /* GraphQL */ `
-  query GetTodo($id: ID!) {
-    getTodo(id: $id) {
+export const getGitHubLabel = /* GraphQL */ `
+  query GetGitHubLabel($id: ID!) {
+    getGitHubLabel(id: $id) {
       id
-      name
-      description
       createdAt
       updatedAt
+      apiUrl
+      name
+      color
+      default
+      issues {
+        nextToken
+      }
     }
   }
 `;
-export const listTodos = /* GraphQL */ `
-  query ListTodos(
-    $filter: ModelTodoFilterInput
+export const listGitHubLabels = /* GraphQL */ `
+  query ListGitHubLabels(
+    $filter: ModelGitHubLabelFilterInput
     $limit: Int
     $nextToken: String
   ) {
-    listTodos(filter: $filter, limit: $limit, nextToken: $nextToken) {
+    listGitHubLabels(filter: $filter, limit: $limit, nextToken: $nextToken) {
       items {
         id
-        name
-        description
         createdAt
         updatedAt
+        apiUrl
+        name
+        color
+        default
+      }
+      nextToken
+    }
+  }
+`;
+export const getGitHubLabelIssueConnection = /* GraphQL */ `
+  query GetGitHubLabelIssueConnection($id: ID!) {
+    getGitHubLabelIssueConnection(id: $id) {
+      id
+      createdAt
+      updatedAt
+      dateFrom
+      dateTo
+      issueId
+      issue {
+        id
+        createdAt
+        updatedAt
+        nodeId
+        apiUrl
+        htmlUrl
+        title
+        number
+        locked
+        state
+        body
+        closedAt
+        authorId
+        repositoryId
+      }
+      labelId
+      label {
+        id
+        createdAt
+        updatedAt
+        apiUrl
+        name
+        color
+        default
+      }
+    }
+  }
+`;
+export const listGitHubLabelIssueConnections = /* GraphQL */ `
+  query ListGitHubLabelIssueConnections(
+    $filter: ModelGitHubLabelIssueConnectionFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    listGitHubLabelIssueConnections(
+      filter: $filter
+      limit: $limit
+      nextToken: $nextToken
+    ) {
+      items {
+        id
+        createdAt
+        updatedAt
+        dateFrom
+        dateTo
+        issueId
+        labelId
       }
       nextToken
     }
@@ -118,6 +190,7 @@ export const getGitHubOrganization = /* GraphQL */ `
       apiUrl
       avatar
       email
+      description
     }
   }
 `;
@@ -147,6 +220,7 @@ export const listGitHubOrganizations = /* GraphQL */ `
         apiUrl
         avatar
         email
+        description
       }
       nextToken
     }
@@ -401,6 +475,12 @@ export const getGitHubRepository = /* GraphQL */ `
       htmlUrl
       gitUrl
       sshUrl
+      stars {
+        nextToken
+      }
+      teams {
+        nextToken
+      }
       issues {
         nextToken
       }
@@ -441,9 +521,253 @@ export const listGitHubRepositorys = /* GraphQL */ `
     }
   }
 `;
+export const getGitHubStar = /* GraphQL */ `
+  query GetGitHubStar($repositoryId: ID!, $userId: ID!) {
+    getGitHubStar(repositoryId: $repositoryId, userId: $userId) {
+      id
+      createdAt
+      updatedAt
+      dateFrom
+      dateTo
+      repositoryId
+      repository {
+        id
+        createdAt
+        updatedAt
+        nodeId
+        name
+        fullName
+        description
+        apiUrl
+        htmlUrl
+        gitUrl
+        sshUrl
+      }
+      userId
+      user {
+        id
+        createdAt
+        updatedAt
+        login
+        nodeId
+        apiUrl
+        htmlUrl
+        avatar
+        name
+        company
+        email
+      }
+    }
+  }
+`;
+export const listGitHubStars = /* GraphQL */ `
+  query ListGitHubStars(
+    $repositoryId: ID
+    $userId: ModelIDKeyConditionInput
+    $filter: ModelGitHubStarFilterInput
+    $limit: Int
+    $nextToken: String
+    $sortDirection: ModelSortDirection
+  ) {
+    listGitHubStars(
+      repositoryId: $repositoryId
+      userId: $userId
+      filter: $filter
+      limit: $limit
+      nextToken: $nextToken
+      sortDirection: $sortDirection
+    ) {
+      items {
+        id
+        createdAt
+        updatedAt
+        dateFrom
+        dateTo
+        repositoryId
+        userId
+      }
+      nextToken
+    }
+  }
+`;
+export const getGitHubTeam = /* GraphQL */ `
+  query GetGitHubTeam($id: ID!) {
+    getGitHubTeam(id: $id) {
+      id
+      createdAt
+      updatedAt
+      name
+      nodeId
+      description
+      slug
+      privacy
+      apiUrl
+      htmlUrl
+      membersUrl
+      members {
+        nextToken
+      }
+      repositories {
+        nextToken
+      }
+    }
+  }
+`;
+export const listGitHubTeams = /* GraphQL */ `
+  query ListGitHubTeams(
+    $filter: ModelGitHubTeamFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    listGitHubTeams(filter: $filter, limit: $limit, nextToken: $nextToken) {
+      items {
+        id
+        createdAt
+        updatedAt
+        name
+        nodeId
+        description
+        slug
+        privacy
+        apiUrl
+        htmlUrl
+        membersUrl
+      }
+      nextToken
+    }
+  }
+`;
+export const getGitHubTeamMembership = /* GraphQL */ `
+  query GetGitHubTeamMembership($id: ID!) {
+    getGitHubTeamMembership(id: $id) {
+      id
+      createdAt
+      updatedAt
+      dateFrom
+      dateTo
+      userId
+      user {
+        id
+        createdAt
+        updatedAt
+        login
+        nodeId
+        apiUrl
+        htmlUrl
+        avatar
+        name
+        company
+        email
+      }
+      teamId
+      team {
+        id
+        createdAt
+        updatedAt
+        login
+        nodeId
+        apiUrl
+        htmlUrl
+        avatar
+        name
+        company
+        email
+      }
+    }
+  }
+`;
+export const listGitHubTeamMemberships = /* GraphQL */ `
+  query ListGitHubTeamMemberships(
+    $filter: ModelGitHubTeamMembershipFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    listGitHubTeamMemberships(
+      filter: $filter
+      limit: $limit
+      nextToken: $nextToken
+    ) {
+      items {
+        id
+        createdAt
+        updatedAt
+        dateFrom
+        dateTo
+        userId
+        teamId
+      }
+      nextToken
+    }
+  }
+`;
+export const getGitHubTeamRepository = /* GraphQL */ `
+  query GetGitHubTeamRepository($id: ID!) {
+    getGitHubTeamRepository(id: $id) {
+      id
+      createdAt
+      updatedAt
+      dateFrom
+      dateTo
+      permission
+      repositoryId
+      repository {
+        id
+        createdAt
+        updatedAt
+        nodeId
+        name
+        fullName
+        description
+        apiUrl
+        htmlUrl
+        gitUrl
+        sshUrl
+      }
+      teamId
+      team {
+        id
+        createdAt
+        updatedAt
+        login
+        nodeId
+        apiUrl
+        htmlUrl
+        avatar
+        name
+        company
+        email
+      }
+    }
+  }
+`;
+export const listGitHubTeamRepositorys = /* GraphQL */ `
+  query ListGitHubTeamRepositorys(
+    $filter: ModelGitHubTeamRepositoryFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    listGitHubTeamRepositorys(
+      filter: $filter
+      limit: $limit
+      nextToken: $nextToken
+    ) {
+      items {
+        id
+        createdAt
+        updatedAt
+        dateFrom
+        dateTo
+        permission
+        repositoryId
+        teamId
+      }
+      nextToken
+    }
+  }
+`;
 export const getGitHubUser = /* GraphQL */ `
-  query GetGitHubUser($id: ID!, $login: String!) {
-    getGitHubUser(id: $id, login: $login) {
+  query GetGitHubUser($id: ID!) {
+    getGitHubUser(id: $id) {
       id
       createdAt
       updatedAt
@@ -455,6 +779,9 @@ export const getGitHubUser = /* GraphQL */ `
       name
       company
       email
+      teams {
+        nextToken
+      }
       issuesAuthored {
         nextToken
       }
@@ -478,21 +805,11 @@ export const getGitHubUser = /* GraphQL */ `
 `;
 export const listGitHubUsers = /* GraphQL */ `
   query ListGitHubUsers(
-    $id: ID
-    $login: ModelStringKeyConditionInput
     $filter: ModelGitHubUserFilterInput
     $limit: Int
     $nextToken: String
-    $sortDirection: ModelSortDirection
   ) {
-    listGitHubUsers(
-      id: $id
-      login: $login
-      filter: $filter
-      limit: $limit
-      nextToken: $nextToken
-      sortDirection: $sortDirection
-    ) {
+    listGitHubUsers(filter: $filter, limit: $limit, nextToken: $nextToken) {
       items {
         id
         createdAt
@@ -505,6 +822,33 @@ export const listGitHubUsers = /* GraphQL */ `
         name
         company
         email
+      }
+      nextToken
+    }
+  }
+`;
+export const getUser = /* GraphQL */ `
+  query GetUser($id: ID!) {
+    getUser(id: $id) {
+      id
+      createdAt
+      updatedAt
+      login
+    }
+  }
+`;
+export const listUsers = /* GraphQL */ `
+  query ListUsers(
+    $filter: ModelUserFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    listUsers(filter: $filter, limit: $limit, nextToken: $nextToken) {
+      items {
+        id
+        createdAt
+        updatedAt
+        login
       }
       nextToken
     }
@@ -614,6 +958,63 @@ export const listPullRequestReviewRequests = /* GraphQL */ `
         reviewerId
         requesterId
         reviewId
+      }
+      nextToken
+    }
+  }
+`;
+export const userByGitHubLogin = /* GraphQL */ `
+  query UserByGitHubLogin(
+    $login: String
+    $sortDirection: ModelSortDirection
+    $filter: ModelGitHubUserFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    userByGitHubLogin(
+      login: $login
+      sortDirection: $sortDirection
+      filter: $filter
+      limit: $limit
+      nextToken: $nextToken
+    ) {
+      items {
+        id
+        createdAt
+        updatedAt
+        login
+        nodeId
+        apiUrl
+        htmlUrl
+        avatar
+        name
+        company
+        email
+      }
+      nextToken
+    }
+  }
+`;
+export const userByGitHubLoginFML = /* GraphQL */ `
+  query UserByGitHubLoginFML(
+    $login: String
+    $sortDirection: ModelSortDirection
+    $filter: ModelUserFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    userByGitHubLoginFML(
+      login: $login
+      sortDirection: $sortDirection
+      filter: $filter
+      limit: $limit
+      nextToken: $nextToken
+    ) {
+      items {
+        id
+        createdAt
+        updatedAt
+        login
       }
       nextToken
     }

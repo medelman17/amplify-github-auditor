@@ -15,8 +15,8 @@ export type CreateGitHubIssueInput = {
   state: GitHubIssueState,
   body: string,
   closedAt?: string | null,
-  authorId: string,
-  repositoryId: string,
+  authorId?: string | null,
+  repositoryId?: string | null,
 };
 
 export enum GitHubIssueState {
@@ -138,11 +138,12 @@ export type GitHubIssue = {
   state?: GitHubIssueState,
   body?: string,
   closedAt?: string | null,
-  authorId?: string,
+  authorId?: string | null,
   author?: GitHubUser,
-  repositoryId?: string,
+  repositoryId?: string | null,
   repository?: GitHubRepository,
   assignees?: ModelIssueAsigneeConnection,
+  labels?: ModelGitHubLabelIssueConnectionConnection,
 };
 
 export type GitHubUser = {
@@ -158,12 +159,32 @@ export type GitHubUser = {
   name?: string | null,
   company?: string | null,
   email?: string | null,
+  teams?: ModelGitHubTeamMembershipConnection,
   issuesAuthored?: ModelGitHubIssueConnection,
   issuesAssigned?: ModelIssueAsigneeConnection,
   pullRequestsAuthored?: ModelGitHubPullRequestConnection,
   pullRequestsAssigned?: ModelPullRequestAsigneeConnection,
   reviewRequestsAuthored?: ModelPullRequestReviewRequestConnection,
   reviewRequestsAssigned?: ModelPullRequestReviewRequestConnection,
+};
+
+export type ModelGitHubTeamMembershipConnection = {
+  __typename: "ModelGitHubTeamMembershipConnection",
+  items?:  Array<GitHubTeamMembership | null > | null,
+  nextToken?: string | null,
+};
+
+export type GitHubTeamMembership = {
+  __typename: "GitHubTeamMembership",
+  id?: string,
+  createdAt?: string,
+  updatedAt?: string,
+  dateFrom?: string,
+  dateTo?: string | null,
+  userId?: string,
+  user?: GitHubUser,
+  teamId?: string,
+  team?: GitHubUser,
 };
 
 export type ModelGitHubIssueConnection = {
@@ -233,9 +254,50 @@ export type GitHubRepository = {
   htmlUrl?: string,
   gitUrl?: string,
   sshUrl?: string,
+  stars?: ModelGitHubStarConnection,
+  teams?: ModelGitHubTeamRepositoryConnection,
   issues?: ModelGitHubIssueConnection,
   pullRequests?: ModelGitHubPullRequestConnection,
   reviewRequests?: ModelPullRequestReviewRequestConnection,
+};
+
+export type ModelGitHubStarConnection = {
+  __typename: "ModelGitHubStarConnection",
+  items?:  Array<GitHubStar | null > | null,
+  nextToken?: string | null,
+};
+
+export type GitHubStar = {
+  __typename: "GitHubStar",
+  id?: string,
+  createdAt?: string,
+  updatedAt?: string,
+  dateFrom?: string,
+  dateTo?: string | null,
+  repositoryId?: string,
+  repository?: GitHubRepository,
+  userId?: string,
+  user?: GitHubUser,
+};
+
+export type ModelGitHubTeamRepositoryConnection = {
+  __typename: "ModelGitHubTeamRepositoryConnection",
+  items?:  Array<GitHubTeamRepository | null > | null,
+  nextToken?: string | null,
+};
+
+export type GitHubTeamRepository = {
+  __typename: "GitHubTeamRepository",
+  id?: string,
+  createdAt?: string,
+  updatedAt?: string,
+  dateFrom?: string,
+  dateTo?: string | null,
+  permission?: string,
+  repositoryId?: string,
+  repository?: GitHubRepository,
+  teamId?: string,
+  team?: GitHubUser,
 };
 
 export type ModelPullRequestReviewRequestConnection = {
@@ -346,6 +408,37 @@ export type ModelPullRequestReviewConnection = {
   nextToken?: string | null,
 };
 
+export type ModelGitHubLabelIssueConnectionConnection = {
+  __typename: "ModelGitHubLabelIssueConnectionConnection",
+  items?:  Array<GitHubLabelIssueConnection | null > | null,
+  nextToken?: string | null,
+};
+
+export type GitHubLabelIssueConnection = {
+  __typename: "GitHubLabelIssueConnection",
+  id?: string,
+  createdAt?: string,
+  updatedAt?: string,
+  dateFrom?: string,
+  dateTo?: string | null,
+  issueId?: string,
+  issue?: GitHubIssue,
+  labelId?: string,
+  label?: GitHubLabel,
+};
+
+export type GitHubLabel = {
+  __typename: "GitHubLabel",
+  id?: string,
+  createdAt?: string,
+  updatedAt?: string,
+  apiUrl?: string,
+  name?: string,
+  color?: string,
+  default?: boolean | null,
+  issues?: ModelGitHubLabelIssueConnectionConnection,
+};
+
 export type UpdateGitHubIssueInput = {
   id: string,
   createdAt?: string | null,
@@ -403,36 +496,75 @@ export type DeleteIssueAsigneeInput = {
   id?: string | null,
 };
 
-export type CreateTodoInput = {
+export type CreateGitHubLabelInput = {
   id?: string | null,
+  createdAt?: string | null,
+  updatedAt?: string | null,
+  apiUrl: string,
   name: string,
-  description?: string | null,
+  color: string,
+  default?: boolean | null,
 };
 
-export type ModelTodoConditionInput = {
+export type ModelGitHubLabelConditionInput = {
+  createdAt?: ModelStringInput | null,
+  updatedAt?: ModelStringInput | null,
+  apiUrl?: ModelStringInput | null,
   name?: ModelStringInput | null,
-  description?: ModelStringInput | null,
-  and?: Array< ModelTodoConditionInput | null > | null,
-  or?: Array< ModelTodoConditionInput | null > | null,
-  not?: ModelTodoConditionInput | null,
+  color?: ModelStringInput | null,
+  default?: ModelBooleanInput | null,
+  and?: Array< ModelGitHubLabelConditionInput | null > | null,
+  or?: Array< ModelGitHubLabelConditionInput | null > | null,
+  not?: ModelGitHubLabelConditionInput | null,
 };
 
-export type Todo = {
-  __typename: "Todo",
-  id?: string,
-  name?: string,
-  description?: string | null,
-  createdAt?: string,
-  updatedAt?: string,
-};
-
-export type UpdateTodoInput = {
+export type UpdateGitHubLabelInput = {
   id: string,
+  createdAt?: string | null,
+  updatedAt?: string | null,
+  apiUrl?: string | null,
   name?: string | null,
-  description?: string | null,
+  color?: string | null,
+  default?: boolean | null,
 };
 
-export type DeleteTodoInput = {
+export type DeleteGitHubLabelInput = {
+  id?: string | null,
+};
+
+export type CreateGitHubLabelIssueConnectionInput = {
+  id?: string | null,
+  createdAt?: string | null,
+  updatedAt?: string | null,
+  dateFrom: string,
+  dateTo?: string | null,
+  issueId: string,
+  labelId: string,
+};
+
+export type ModelGitHubLabelIssueConnectionConditionInput = {
+  createdAt?: ModelStringInput | null,
+  updatedAt?: ModelStringInput | null,
+  dateFrom?: ModelStringInput | null,
+  dateTo?: ModelStringInput | null,
+  issueId?: ModelIDInput | null,
+  labelId?: ModelIDInput | null,
+  and?: Array< ModelGitHubLabelIssueConnectionConditionInput | null > | null,
+  or?: Array< ModelGitHubLabelIssueConnectionConditionInput | null > | null,
+  not?: ModelGitHubLabelIssueConnectionConditionInput | null,
+};
+
+export type UpdateGitHubLabelIssueConnectionInput = {
+  id: string,
+  createdAt?: string | null,
+  updatedAt?: string | null,
+  dateFrom?: string | null,
+  dateTo?: string | null,
+  issueId?: string | null,
+  labelId?: string | null,
+};
+
+export type DeleteGitHubLabelIssueConnectionInput = {
   id?: string | null,
 };
 
@@ -445,6 +577,7 @@ export type CreateGitHubOrganizationInput = {
   apiUrl: string,
   avatar?: string | null,
   email?: string | null,
+  description?: string | null,
 };
 
 export type ModelGitHubOrganizationConditionInput = {
@@ -454,6 +587,7 @@ export type ModelGitHubOrganizationConditionInput = {
   apiUrl?: ModelStringInput | null,
   avatar?: ModelStringInput | null,
   email?: ModelStringInput | null,
+  description?: ModelStringInput | null,
   and?: Array< ModelGitHubOrganizationConditionInput | null > | null,
   or?: Array< ModelGitHubOrganizationConditionInput | null > | null,
   not?: ModelGitHubOrganizationConditionInput | null,
@@ -469,6 +603,7 @@ export type GitHubOrganization = {
   apiUrl?: string,
   avatar?: string | null,
   email?: string | null,
+  description?: string | null,
 };
 
 export type UpdateGitHubOrganizationInput = {
@@ -480,6 +615,7 @@ export type UpdateGitHubOrganizationInput = {
   apiUrl?: string | null,
   avatar?: string | null,
   email?: string | null,
+  description?: string | null,
 };
 
 export type DeleteGitHubOrganizationInput = {
@@ -731,6 +867,180 @@ export type DeleteGitHubRepositoryInput = {
   id?: string | null,
 };
 
+export type CreateGitHubStarInput = {
+  id?: string | null,
+  createdAt?: string | null,
+  updatedAt?: string | null,
+  dateFrom: string,
+  dateTo?: string | null,
+  repositoryId: string,
+  userId: string,
+};
+
+export type ModelGitHubStarConditionInput = {
+  createdAt?: ModelStringInput | null,
+  updatedAt?: ModelStringInput | null,
+  dateFrom?: ModelStringInput | null,
+  dateTo?: ModelStringInput | null,
+  and?: Array< ModelGitHubStarConditionInput | null > | null,
+  or?: Array< ModelGitHubStarConditionInput | null > | null,
+  not?: ModelGitHubStarConditionInput | null,
+};
+
+export type UpdateGitHubStarInput = {
+  id: string,
+  createdAt?: string | null,
+  updatedAt?: string | null,
+  dateFrom?: string | null,
+  dateTo?: string | null,
+  repositoryId?: string | null,
+  userId?: string | null,
+};
+
+export type DeleteGitHubStarInput = {
+  id?: string | null,
+};
+
+export type CreateGitHubTeamInput = {
+  id?: string | null,
+  createdAt?: string | null,
+  updatedAt?: string | null,
+  name: string,
+  nodeId: string,
+  description?: string | null,
+  slug: string,
+  privacy?: string | null,
+  apiUrl: string,
+  htmlUrl: string,
+  membersUrl: string,
+};
+
+export type ModelGitHubTeamConditionInput = {
+  createdAt?: ModelStringInput | null,
+  updatedAt?: ModelStringInput | null,
+  name?: ModelStringInput | null,
+  nodeId?: ModelStringInput | null,
+  description?: ModelStringInput | null,
+  slug?: ModelStringInput | null,
+  privacy?: ModelStringInput | null,
+  apiUrl?: ModelStringInput | null,
+  htmlUrl?: ModelStringInput | null,
+  membersUrl?: ModelStringInput | null,
+  and?: Array< ModelGitHubTeamConditionInput | null > | null,
+  or?: Array< ModelGitHubTeamConditionInput | null > | null,
+  not?: ModelGitHubTeamConditionInput | null,
+};
+
+export type GitHubTeam = {
+  __typename: "GitHubTeam",
+  id?: string,
+  createdAt?: string,
+  updatedAt?: string,
+  name?: string,
+  nodeId?: string,
+  description?: string | null,
+  slug?: string,
+  privacy?: string | null,
+  apiUrl?: string,
+  htmlUrl?: string,
+  membersUrl?: string,
+  members?: ModelGitHubTeamMembershipConnection,
+  repositories?: ModelGitHubTeamRepositoryConnection,
+};
+
+export type UpdateGitHubTeamInput = {
+  id: string,
+  createdAt?: string | null,
+  updatedAt?: string | null,
+  name?: string | null,
+  nodeId?: string | null,
+  description?: string | null,
+  slug?: string | null,
+  privacy?: string | null,
+  apiUrl?: string | null,
+  htmlUrl?: string | null,
+  membersUrl?: string | null,
+};
+
+export type DeleteGitHubTeamInput = {
+  id?: string | null,
+};
+
+export type CreateGitHubTeamMembershipInput = {
+  id?: string | null,
+  createdAt?: string | null,
+  updatedAt?: string | null,
+  dateFrom: string,
+  dateTo?: string | null,
+  userId: string,
+  teamId: string,
+};
+
+export type ModelGitHubTeamMembershipConditionInput = {
+  createdAt?: ModelStringInput | null,
+  updatedAt?: ModelStringInput | null,
+  dateFrom?: ModelStringInput | null,
+  dateTo?: ModelStringInput | null,
+  userId?: ModelIDInput | null,
+  teamId?: ModelIDInput | null,
+  and?: Array< ModelGitHubTeamMembershipConditionInput | null > | null,
+  or?: Array< ModelGitHubTeamMembershipConditionInput | null > | null,
+  not?: ModelGitHubTeamMembershipConditionInput | null,
+};
+
+export type UpdateGitHubTeamMembershipInput = {
+  id: string,
+  createdAt?: string | null,
+  updatedAt?: string | null,
+  dateFrom?: string | null,
+  dateTo?: string | null,
+  userId?: string | null,
+  teamId?: string | null,
+};
+
+export type DeleteGitHubTeamMembershipInput = {
+  id?: string | null,
+};
+
+export type CreateGitHubTeamRepositoryInput = {
+  id?: string | null,
+  createdAt?: string | null,
+  updatedAt?: string | null,
+  dateFrom: string,
+  dateTo?: string | null,
+  permission: string,
+  repositoryId: string,
+  teamId: string,
+};
+
+export type ModelGitHubTeamRepositoryConditionInput = {
+  createdAt?: ModelStringInput | null,
+  updatedAt?: ModelStringInput | null,
+  dateFrom?: ModelStringInput | null,
+  dateTo?: ModelStringInput | null,
+  permission?: ModelStringInput | null,
+  repositoryId?: ModelIDInput | null,
+  teamId?: ModelIDInput | null,
+  and?: Array< ModelGitHubTeamRepositoryConditionInput | null > | null,
+  or?: Array< ModelGitHubTeamRepositoryConditionInput | null > | null,
+  not?: ModelGitHubTeamRepositoryConditionInput | null,
+};
+
+export type UpdateGitHubTeamRepositoryInput = {
+  id: string,
+  createdAt?: string | null,
+  updatedAt?: string | null,
+  dateFrom?: string | null,
+  dateTo?: string | null,
+  permission?: string | null,
+  repositoryId?: string | null,
+  teamId?: string | null,
+};
+
+export type DeleteGitHubTeamRepositoryInput = {
+  id?: string | null,
+};
+
 export type CreateGitHubUserInput = {
   id?: string | null,
   createdAt?: string | null,
@@ -748,6 +1058,7 @@ export type CreateGitHubUserInput = {
 export type ModelGitHubUserConditionInput = {
   createdAt?: ModelStringInput | null,
   updatedAt?: ModelStringInput | null,
+  login?: ModelStringInput | null,
   nodeId?: ModelStringInput | null,
   apiUrl?: ModelStringInput | null,
   htmlUrl?: ModelStringInput | null,
@@ -775,6 +1086,41 @@ export type UpdateGitHubUserInput = {
 };
 
 export type DeleteGitHubUserInput = {
+  id?: string | null,
+};
+
+export type CreateUserInput = {
+  id?: string | null,
+  createdAt?: string | null,
+  updatedAt?: string | null,
+  login: string,
+};
+
+export type ModelUserConditionInput = {
+  createdAt?: ModelStringInput | null,
+  updatedAt?: ModelStringInput | null,
+  login?: ModelStringInput | null,
+  and?: Array< ModelUserConditionInput | null > | null,
+  or?: Array< ModelUserConditionInput | null > | null,
+  not?: ModelUserConditionInput | null,
+};
+
+export type User = {
+  __typename: "User",
+  id?: string,
+  createdAt?: string,
+  updatedAt?: string,
+  login?: string,
+};
+
+export type UpdateUserInput = {
+  id: string,
+  createdAt?: string | null,
+  updatedAt?: string | null,
+  login?: string | null,
+};
+
+export type DeleteUserInput = {
   id?: string | null,
 };
 
@@ -851,19 +1197,36 @@ export type ModelGitHubIssueFilterInput = {
   not?: ModelGitHubIssueFilterInput | null,
 };
 
-export type ModelTodoFilterInput = {
+export type ModelGitHubLabelFilterInput = {
   id?: ModelIDInput | null,
+  createdAt?: ModelStringInput | null,
+  updatedAt?: ModelStringInput | null,
+  apiUrl?: ModelStringInput | null,
   name?: ModelStringInput | null,
-  description?: ModelStringInput | null,
-  and?: Array< ModelTodoFilterInput | null > | null,
-  or?: Array< ModelTodoFilterInput | null > | null,
-  not?: ModelTodoFilterInput | null,
+  color?: ModelStringInput | null,
+  default?: ModelBooleanInput | null,
+  and?: Array< ModelGitHubLabelFilterInput | null > | null,
+  or?: Array< ModelGitHubLabelFilterInput | null > | null,
+  not?: ModelGitHubLabelFilterInput | null,
 };
 
-export type ModelTodoConnection = {
-  __typename: "ModelTodoConnection",
-  items?:  Array<Todo | null > | null,
+export type ModelGitHubLabelConnection = {
+  __typename: "ModelGitHubLabelConnection",
+  items?:  Array<GitHubLabel | null > | null,
   nextToken?: string | null,
+};
+
+export type ModelGitHubLabelIssueConnectionFilterInput = {
+  id?: ModelIDInput | null,
+  createdAt?: ModelStringInput | null,
+  updatedAt?: ModelStringInput | null,
+  dateFrom?: ModelStringInput | null,
+  dateTo?: ModelStringInput | null,
+  issueId?: ModelIDInput | null,
+  labelId?: ModelIDInput | null,
+  and?: Array< ModelGitHubLabelIssueConnectionFilterInput | null > | null,
+  or?: Array< ModelGitHubLabelIssueConnectionFilterInput | null > | null,
+  not?: ModelGitHubLabelIssueConnectionFilterInput | null,
 };
 
 export type ModelStringKeyConditionInput = {
@@ -885,6 +1248,7 @@ export type ModelGitHubOrganizationFilterInput = {
   apiUrl?: ModelStringInput | null,
   avatar?: ModelStringInput | null,
   email?: ModelStringInput | null,
+  description?: ModelStringInput | null,
   and?: Array< ModelGitHubOrganizationFilterInput | null > | null,
   or?: Array< ModelGitHubOrganizationFilterInput | null > | null,
   not?: ModelGitHubOrganizationFilterInput | null,
@@ -980,6 +1344,79 @@ export type ModelGitHubRepositoryConnection = {
   nextToken?: string | null,
 };
 
+export type ModelIDKeyConditionInput = {
+  eq?: string | null,
+  le?: string | null,
+  lt?: string | null,
+  ge?: string | null,
+  gt?: string | null,
+  between?: Array< string | null > | null,
+  beginsWith?: string | null,
+};
+
+export type ModelGitHubStarFilterInput = {
+  id?: ModelIDInput | null,
+  createdAt?: ModelStringInput | null,
+  updatedAt?: ModelStringInput | null,
+  dateFrom?: ModelStringInput | null,
+  dateTo?: ModelStringInput | null,
+  repositoryId?: ModelIDInput | null,
+  userId?: ModelIDInput | null,
+  and?: Array< ModelGitHubStarFilterInput | null > | null,
+  or?: Array< ModelGitHubStarFilterInput | null > | null,
+  not?: ModelGitHubStarFilterInput | null,
+};
+
+export type ModelGitHubTeamFilterInput = {
+  id?: ModelIDInput | null,
+  createdAt?: ModelStringInput | null,
+  updatedAt?: ModelStringInput | null,
+  name?: ModelStringInput | null,
+  nodeId?: ModelStringInput | null,
+  description?: ModelStringInput | null,
+  slug?: ModelStringInput | null,
+  privacy?: ModelStringInput | null,
+  apiUrl?: ModelStringInput | null,
+  htmlUrl?: ModelStringInput | null,
+  membersUrl?: ModelStringInput | null,
+  and?: Array< ModelGitHubTeamFilterInput | null > | null,
+  or?: Array< ModelGitHubTeamFilterInput | null > | null,
+  not?: ModelGitHubTeamFilterInput | null,
+};
+
+export type ModelGitHubTeamConnection = {
+  __typename: "ModelGitHubTeamConnection",
+  items?:  Array<GitHubTeam | null > | null,
+  nextToken?: string | null,
+};
+
+export type ModelGitHubTeamMembershipFilterInput = {
+  id?: ModelIDInput | null,
+  createdAt?: ModelStringInput | null,
+  updatedAt?: ModelStringInput | null,
+  dateFrom?: ModelStringInput | null,
+  dateTo?: ModelStringInput | null,
+  userId?: ModelIDInput | null,
+  teamId?: ModelIDInput | null,
+  and?: Array< ModelGitHubTeamMembershipFilterInput | null > | null,
+  or?: Array< ModelGitHubTeamMembershipFilterInput | null > | null,
+  not?: ModelGitHubTeamMembershipFilterInput | null,
+};
+
+export type ModelGitHubTeamRepositoryFilterInput = {
+  id?: ModelIDInput | null,
+  createdAt?: ModelStringInput | null,
+  updatedAt?: ModelStringInput | null,
+  dateFrom?: ModelStringInput | null,
+  dateTo?: ModelStringInput | null,
+  permission?: ModelStringInput | null,
+  repositoryId?: ModelIDInput | null,
+  teamId?: ModelIDInput | null,
+  and?: Array< ModelGitHubTeamRepositoryFilterInput | null > | null,
+  or?: Array< ModelGitHubTeamRepositoryFilterInput | null > | null,
+  not?: ModelGitHubTeamRepositoryFilterInput | null,
+};
+
 export type ModelGitHubUserFilterInput = {
   id?: ModelIDInput | null,
   createdAt?: ModelStringInput | null,
@@ -1000,6 +1437,22 @@ export type ModelGitHubUserFilterInput = {
 export type ModelGitHubUserConnection = {
   __typename: "ModelGitHubUserConnection",
   items?:  Array<GitHubUser | null > | null,
+  nextToken?: string | null,
+};
+
+export type ModelUserFilterInput = {
+  id?: ModelIDInput | null,
+  createdAt?: ModelStringInput | null,
+  updatedAt?: ModelStringInput | null,
+  login?: ModelStringInput | null,
+  and?: Array< ModelUserFilterInput | null > | null,
+  or?: Array< ModelUserFilterInput | null > | null,
+  not?: ModelUserFilterInput | null,
+};
+
+export type ModelUserConnection = {
+  __typename: "ModelUserConnection",
+  items?:  Array<User | null > | null,
   nextToken?: string | null,
 };
 
@@ -1040,8 +1493,8 @@ export type CreateGitHubIssueMutation = {
     state: GitHubIssueState,
     body: string,
     closedAt?: string | null,
-    authorId: string,
-    author:  {
+    authorId?: string | null,
+    author?:  {
       __typename: "GitHubUser",
       id: string,
       createdAt: string,
@@ -1054,9 +1507,9 @@ export type CreateGitHubIssueMutation = {
       name?: string | null,
       company?: string | null,
       email?: string | null,
-    },
-    repositoryId: string,
-    repository:  {
+    } | null,
+    repositoryId?: string | null,
+    repository?:  {
       __typename: "GitHubRepository",
       id: string,
       createdAt: string,
@@ -1069,9 +1522,13 @@ export type CreateGitHubIssueMutation = {
       htmlUrl: string,
       gitUrl: string,
       sshUrl: string,
-    },
+    } | null,
     assignees?:  {
       __typename: "ModelIssueAsigneeConnection",
+      nextToken?: string | null,
+    } | null,
+    labels?:  {
+      __typename: "ModelGitHubLabelIssueConnectionConnection",
       nextToken?: string | null,
     } | null,
   } | null,
@@ -1097,8 +1554,8 @@ export type UpdateGitHubIssueMutation = {
     state: GitHubIssueState,
     body: string,
     closedAt?: string | null,
-    authorId: string,
-    author:  {
+    authorId?: string | null,
+    author?:  {
       __typename: "GitHubUser",
       id: string,
       createdAt: string,
@@ -1111,9 +1568,9 @@ export type UpdateGitHubIssueMutation = {
       name?: string | null,
       company?: string | null,
       email?: string | null,
-    },
-    repositoryId: string,
-    repository:  {
+    } | null,
+    repositoryId?: string | null,
+    repository?:  {
       __typename: "GitHubRepository",
       id: string,
       createdAt: string,
@@ -1126,9 +1583,13 @@ export type UpdateGitHubIssueMutation = {
       htmlUrl: string,
       gitUrl: string,
       sshUrl: string,
-    },
+    } | null,
     assignees?:  {
       __typename: "ModelIssueAsigneeConnection",
+      nextToken?: string | null,
+    } | null,
+    labels?:  {
+      __typename: "ModelGitHubLabelIssueConnectionConnection",
       nextToken?: string | null,
     } | null,
   } | null,
@@ -1154,8 +1615,8 @@ export type DeleteGitHubIssueMutation = {
     state: GitHubIssueState,
     body: string,
     closedAt?: string | null,
-    authorId: string,
-    author:  {
+    authorId?: string | null,
+    author?:  {
       __typename: "GitHubUser",
       id: string,
       createdAt: string,
@@ -1168,9 +1629,9 @@ export type DeleteGitHubIssueMutation = {
       name?: string | null,
       company?: string | null,
       email?: string | null,
-    },
-    repositoryId: string,
-    repository:  {
+    } | null,
+    repositoryId?: string | null,
+    repository?:  {
       __typename: "GitHubRepository",
       id: string,
       createdAt: string,
@@ -1183,9 +1644,13 @@ export type DeleteGitHubIssueMutation = {
       htmlUrl: string,
       gitUrl: string,
       sshUrl: string,
-    },
+    } | null,
     assignees?:  {
       __typename: "ModelIssueAsigneeConnection",
+      nextToken?: string | null,
+    } | null,
+    labels?:  {
+      __typename: "ModelGitHubLabelIssueConnectionConnection",
       nextToken?: string | null,
     } | null,
   } | null,
@@ -1220,8 +1685,8 @@ export type CreateIssueAsigneeMutation = {
       state: GitHubIssueState,
       body: string,
       closedAt?: string | null,
-      authorId: string,
-      repositoryId: string,
+      authorId?: string | null,
+      repositoryId?: string | null,
     },
     user:  {
       __typename: "GitHubUser",
@@ -1269,8 +1734,8 @@ export type UpdateIssueAsigneeMutation = {
       state: GitHubIssueState,
       body: string,
       closedAt?: string | null,
-      authorId: string,
-      repositoryId: string,
+      authorId?: string | null,
+      repositoryId?: string | null,
     },
     user:  {
       __typename: "GitHubUser",
@@ -1318,8 +1783,8 @@ export type DeleteIssueAsigneeMutation = {
       state: GitHubIssueState,
       body: string,
       closedAt?: string | null,
-      authorId: string,
-      repositoryId: string,
+      authorId?: string | null,
+      repositoryId?: string | null,
     },
     user:  {
       __typename: "GitHubUser",
@@ -1338,51 +1803,204 @@ export type DeleteIssueAsigneeMutation = {
   } | null,
 };
 
-export type CreateTodoMutationVariables = {
-  input?: CreateTodoInput,
-  condition?: ModelTodoConditionInput | null,
+export type CreateGitHubLabelMutationVariables = {
+  input?: CreateGitHubLabelInput,
+  condition?: ModelGitHubLabelConditionInput | null,
 };
 
-export type CreateTodoMutation = {
-  createTodo?:  {
-    __typename: "Todo",
+export type CreateGitHubLabelMutation = {
+  createGitHubLabel?:  {
+    __typename: "GitHubLabel",
     id: string,
-    name: string,
-    description?: string | null,
     createdAt: string,
     updatedAt: string,
+    apiUrl: string,
+    name: string,
+    color: string,
+    default?: boolean | null,
+    issues?:  {
+      __typename: "ModelGitHubLabelIssueConnectionConnection",
+      nextToken?: string | null,
+    } | null,
   } | null,
 };
 
-export type UpdateTodoMutationVariables = {
-  input?: UpdateTodoInput,
-  condition?: ModelTodoConditionInput | null,
+export type UpdateGitHubLabelMutationVariables = {
+  input?: UpdateGitHubLabelInput,
+  condition?: ModelGitHubLabelConditionInput | null,
 };
 
-export type UpdateTodoMutation = {
-  updateTodo?:  {
-    __typename: "Todo",
+export type UpdateGitHubLabelMutation = {
+  updateGitHubLabel?:  {
+    __typename: "GitHubLabel",
     id: string,
-    name: string,
-    description?: string | null,
     createdAt: string,
     updatedAt: string,
+    apiUrl: string,
+    name: string,
+    color: string,
+    default?: boolean | null,
+    issues?:  {
+      __typename: "ModelGitHubLabelIssueConnectionConnection",
+      nextToken?: string | null,
+    } | null,
   } | null,
 };
 
-export type DeleteTodoMutationVariables = {
-  input?: DeleteTodoInput,
-  condition?: ModelTodoConditionInput | null,
+export type DeleteGitHubLabelMutationVariables = {
+  input?: DeleteGitHubLabelInput,
+  condition?: ModelGitHubLabelConditionInput | null,
 };
 
-export type DeleteTodoMutation = {
-  deleteTodo?:  {
-    __typename: "Todo",
+export type DeleteGitHubLabelMutation = {
+  deleteGitHubLabel?:  {
+    __typename: "GitHubLabel",
     id: string,
-    name: string,
-    description?: string | null,
     createdAt: string,
     updatedAt: string,
+    apiUrl: string,
+    name: string,
+    color: string,
+    default?: boolean | null,
+    issues?:  {
+      __typename: "ModelGitHubLabelIssueConnectionConnection",
+      nextToken?: string | null,
+    } | null,
+  } | null,
+};
+
+export type CreateGitHubLabelIssueConnectionMutationVariables = {
+  input?: CreateGitHubLabelIssueConnectionInput,
+  condition?: ModelGitHubLabelIssueConnectionConditionInput | null,
+};
+
+export type CreateGitHubLabelIssueConnectionMutation = {
+  createGitHubLabelIssueConnection?:  {
+    __typename: "GitHubLabelIssueConnection",
+    id: string,
+    createdAt: string,
+    updatedAt: string,
+    dateFrom: string,
+    dateTo?: string | null,
+    issueId: string,
+    issue:  {
+      __typename: "GitHubIssue",
+      id: string,
+      createdAt: string,
+      updatedAt: string,
+      nodeId: string,
+      apiUrl: string,
+      htmlUrl: string,
+      title: string,
+      number: number,
+      locked: boolean,
+      state: GitHubIssueState,
+      body: string,
+      closedAt?: string | null,
+      authorId?: string | null,
+      repositoryId?: string | null,
+    },
+    labelId: string,
+    label:  {
+      __typename: "GitHubLabel",
+      id: string,
+      createdAt: string,
+      updatedAt: string,
+      apiUrl: string,
+      name: string,
+      color: string,
+      default?: boolean | null,
+    },
+  } | null,
+};
+
+export type UpdateGitHubLabelIssueConnectionMutationVariables = {
+  input?: UpdateGitHubLabelIssueConnectionInput,
+  condition?: ModelGitHubLabelIssueConnectionConditionInput | null,
+};
+
+export type UpdateGitHubLabelIssueConnectionMutation = {
+  updateGitHubLabelIssueConnection?:  {
+    __typename: "GitHubLabelIssueConnection",
+    id: string,
+    createdAt: string,
+    updatedAt: string,
+    dateFrom: string,
+    dateTo?: string | null,
+    issueId: string,
+    issue:  {
+      __typename: "GitHubIssue",
+      id: string,
+      createdAt: string,
+      updatedAt: string,
+      nodeId: string,
+      apiUrl: string,
+      htmlUrl: string,
+      title: string,
+      number: number,
+      locked: boolean,
+      state: GitHubIssueState,
+      body: string,
+      closedAt?: string | null,
+      authorId?: string | null,
+      repositoryId?: string | null,
+    },
+    labelId: string,
+    label:  {
+      __typename: "GitHubLabel",
+      id: string,
+      createdAt: string,
+      updatedAt: string,
+      apiUrl: string,
+      name: string,
+      color: string,
+      default?: boolean | null,
+    },
+  } | null,
+};
+
+export type DeleteGitHubLabelIssueConnectionMutationVariables = {
+  input?: DeleteGitHubLabelIssueConnectionInput,
+  condition?: ModelGitHubLabelIssueConnectionConditionInput | null,
+};
+
+export type DeleteGitHubLabelIssueConnectionMutation = {
+  deleteGitHubLabelIssueConnection?:  {
+    __typename: "GitHubLabelIssueConnection",
+    id: string,
+    createdAt: string,
+    updatedAt: string,
+    dateFrom: string,
+    dateTo?: string | null,
+    issueId: string,
+    issue:  {
+      __typename: "GitHubIssue",
+      id: string,
+      createdAt: string,
+      updatedAt: string,
+      nodeId: string,
+      apiUrl: string,
+      htmlUrl: string,
+      title: string,
+      number: number,
+      locked: boolean,
+      state: GitHubIssueState,
+      body: string,
+      closedAt?: string | null,
+      authorId?: string | null,
+      repositoryId?: string | null,
+    },
+    labelId: string,
+    label:  {
+      __typename: "GitHubLabel",
+      id: string,
+      createdAt: string,
+      updatedAt: string,
+      apiUrl: string,
+      name: string,
+      color: string,
+      default?: boolean | null,
+    },
   } | null,
 };
 
@@ -1402,6 +2020,7 @@ export type CreateGitHubOrganizationMutation = {
     apiUrl: string,
     avatar?: string | null,
     email?: string | null,
+    description?: string | null,
   } | null,
 };
 
@@ -1421,6 +2040,7 @@ export type UpdateGitHubOrganizationMutation = {
     apiUrl: string,
     avatar?: string | null,
     email?: string | null,
+    description?: string | null,
   } | null,
 };
 
@@ -1440,6 +2060,7 @@ export type DeleteGitHubOrganizationMutation = {
     apiUrl: string,
     avatar?: string | null,
     email?: string | null,
+    description?: string | null,
   } | null,
 };
 
@@ -2125,6 +2746,14 @@ export type CreateGitHubRepositoryMutation = {
     htmlUrl: string,
     gitUrl: string,
     sshUrl: string,
+    stars?:  {
+      __typename: "ModelGitHubStarConnection",
+      nextToken?: string | null,
+    } | null,
+    teams?:  {
+      __typename: "ModelGitHubTeamRepositoryConnection",
+      nextToken?: string | null,
+    } | null,
     issues?:  {
       __typename: "ModelGitHubIssueConnection",
       nextToken?: string | null,
@@ -2159,6 +2788,14 @@ export type UpdateGitHubRepositoryMutation = {
     htmlUrl: string,
     gitUrl: string,
     sshUrl: string,
+    stars?:  {
+      __typename: "ModelGitHubStarConnection",
+      nextToken?: string | null,
+    } | null,
+    teams?:  {
+      __typename: "ModelGitHubTeamRepositoryConnection",
+      nextToken?: string | null,
+    } | null,
     issues?:  {
       __typename: "ModelGitHubIssueConnection",
       nextToken?: string | null,
@@ -2193,6 +2830,14 @@ export type DeleteGitHubRepositoryMutation = {
     htmlUrl: string,
     gitUrl: string,
     sshUrl: string,
+    stars?:  {
+      __typename: "ModelGitHubStarConnection",
+      nextToken?: string | null,
+    } | null,
+    teams?:  {
+      __typename: "ModelGitHubTeamRepositoryConnection",
+      nextToken?: string | null,
+    } | null,
     issues?:  {
       __typename: "ModelGitHubIssueConnection",
       nextToken?: string | null,
@@ -2205,6 +2850,513 @@ export type DeleteGitHubRepositoryMutation = {
       __typename: "ModelPullRequestReviewRequestConnection",
       nextToken?: string | null,
     } | null,
+  } | null,
+};
+
+export type CreateGitHubStarMutationVariables = {
+  input?: CreateGitHubStarInput,
+  condition?: ModelGitHubStarConditionInput | null,
+};
+
+export type CreateGitHubStarMutation = {
+  createGitHubStar?:  {
+    __typename: "GitHubStar",
+    id: string,
+    createdAt: string,
+    updatedAt: string,
+    dateFrom: string,
+    dateTo?: string | null,
+    repositoryId: string,
+    repository:  {
+      __typename: "GitHubRepository",
+      id: string,
+      createdAt: string,
+      updatedAt: string,
+      nodeId: string,
+      name: string,
+      fullName: string,
+      description?: string | null,
+      apiUrl: string,
+      htmlUrl: string,
+      gitUrl: string,
+      sshUrl: string,
+    },
+    userId: string,
+    user:  {
+      __typename: "GitHubUser",
+      id: string,
+      createdAt: string,
+      updatedAt: string,
+      login: string,
+      nodeId: string,
+      apiUrl: string,
+      htmlUrl: string,
+      avatar?: string | null,
+      name?: string | null,
+      company?: string | null,
+      email?: string | null,
+    },
+  } | null,
+};
+
+export type UpdateGitHubStarMutationVariables = {
+  input?: UpdateGitHubStarInput,
+  condition?: ModelGitHubStarConditionInput | null,
+};
+
+export type UpdateGitHubStarMutation = {
+  updateGitHubStar?:  {
+    __typename: "GitHubStar",
+    id: string,
+    createdAt: string,
+    updatedAt: string,
+    dateFrom: string,
+    dateTo?: string | null,
+    repositoryId: string,
+    repository:  {
+      __typename: "GitHubRepository",
+      id: string,
+      createdAt: string,
+      updatedAt: string,
+      nodeId: string,
+      name: string,
+      fullName: string,
+      description?: string | null,
+      apiUrl: string,
+      htmlUrl: string,
+      gitUrl: string,
+      sshUrl: string,
+    },
+    userId: string,
+    user:  {
+      __typename: "GitHubUser",
+      id: string,
+      createdAt: string,
+      updatedAt: string,
+      login: string,
+      nodeId: string,
+      apiUrl: string,
+      htmlUrl: string,
+      avatar?: string | null,
+      name?: string | null,
+      company?: string | null,
+      email?: string | null,
+    },
+  } | null,
+};
+
+export type DeleteGitHubStarMutationVariables = {
+  input?: DeleteGitHubStarInput,
+  condition?: ModelGitHubStarConditionInput | null,
+};
+
+export type DeleteGitHubStarMutation = {
+  deleteGitHubStar?:  {
+    __typename: "GitHubStar",
+    id: string,
+    createdAt: string,
+    updatedAt: string,
+    dateFrom: string,
+    dateTo?: string | null,
+    repositoryId: string,
+    repository:  {
+      __typename: "GitHubRepository",
+      id: string,
+      createdAt: string,
+      updatedAt: string,
+      nodeId: string,
+      name: string,
+      fullName: string,
+      description?: string | null,
+      apiUrl: string,
+      htmlUrl: string,
+      gitUrl: string,
+      sshUrl: string,
+    },
+    userId: string,
+    user:  {
+      __typename: "GitHubUser",
+      id: string,
+      createdAt: string,
+      updatedAt: string,
+      login: string,
+      nodeId: string,
+      apiUrl: string,
+      htmlUrl: string,
+      avatar?: string | null,
+      name?: string | null,
+      company?: string | null,
+      email?: string | null,
+    },
+  } | null,
+};
+
+export type CreateGitHubTeamMutationVariables = {
+  input?: CreateGitHubTeamInput,
+  condition?: ModelGitHubTeamConditionInput | null,
+};
+
+export type CreateGitHubTeamMutation = {
+  createGitHubTeam?:  {
+    __typename: "GitHubTeam",
+    id: string,
+    createdAt: string,
+    updatedAt: string,
+    name: string,
+    nodeId: string,
+    description?: string | null,
+    slug: string,
+    privacy?: string | null,
+    apiUrl: string,
+    htmlUrl: string,
+    membersUrl: string,
+    members?:  {
+      __typename: "ModelGitHubTeamMembershipConnection",
+      nextToken?: string | null,
+    } | null,
+    repositories?:  {
+      __typename: "ModelGitHubTeamRepositoryConnection",
+      nextToken?: string | null,
+    } | null,
+  } | null,
+};
+
+export type UpdateGitHubTeamMutationVariables = {
+  input?: UpdateGitHubTeamInput,
+  condition?: ModelGitHubTeamConditionInput | null,
+};
+
+export type UpdateGitHubTeamMutation = {
+  updateGitHubTeam?:  {
+    __typename: "GitHubTeam",
+    id: string,
+    createdAt: string,
+    updatedAt: string,
+    name: string,
+    nodeId: string,
+    description?: string | null,
+    slug: string,
+    privacy?: string | null,
+    apiUrl: string,
+    htmlUrl: string,
+    membersUrl: string,
+    members?:  {
+      __typename: "ModelGitHubTeamMembershipConnection",
+      nextToken?: string | null,
+    } | null,
+    repositories?:  {
+      __typename: "ModelGitHubTeamRepositoryConnection",
+      nextToken?: string | null,
+    } | null,
+  } | null,
+};
+
+export type DeleteGitHubTeamMutationVariables = {
+  input?: DeleteGitHubTeamInput,
+  condition?: ModelGitHubTeamConditionInput | null,
+};
+
+export type DeleteGitHubTeamMutation = {
+  deleteGitHubTeam?:  {
+    __typename: "GitHubTeam",
+    id: string,
+    createdAt: string,
+    updatedAt: string,
+    name: string,
+    nodeId: string,
+    description?: string | null,
+    slug: string,
+    privacy?: string | null,
+    apiUrl: string,
+    htmlUrl: string,
+    membersUrl: string,
+    members?:  {
+      __typename: "ModelGitHubTeamMembershipConnection",
+      nextToken?: string | null,
+    } | null,
+    repositories?:  {
+      __typename: "ModelGitHubTeamRepositoryConnection",
+      nextToken?: string | null,
+    } | null,
+  } | null,
+};
+
+export type CreateGitHubTeamMembershipMutationVariables = {
+  input?: CreateGitHubTeamMembershipInput,
+  condition?: ModelGitHubTeamMembershipConditionInput | null,
+};
+
+export type CreateGitHubTeamMembershipMutation = {
+  createGitHubTeamMembership?:  {
+    __typename: "GitHubTeamMembership",
+    id: string,
+    createdAt: string,
+    updatedAt: string,
+    dateFrom: string,
+    dateTo?: string | null,
+    userId: string,
+    user:  {
+      __typename: "GitHubUser",
+      id: string,
+      createdAt: string,
+      updatedAt: string,
+      login: string,
+      nodeId: string,
+      apiUrl: string,
+      htmlUrl: string,
+      avatar?: string | null,
+      name?: string | null,
+      company?: string | null,
+      email?: string | null,
+    },
+    teamId: string,
+    team:  {
+      __typename: "GitHubUser",
+      id: string,
+      createdAt: string,
+      updatedAt: string,
+      login: string,
+      nodeId: string,
+      apiUrl: string,
+      htmlUrl: string,
+      avatar?: string | null,
+      name?: string | null,
+      company?: string | null,
+      email?: string | null,
+    },
+  } | null,
+};
+
+export type UpdateGitHubTeamMembershipMutationVariables = {
+  input?: UpdateGitHubTeamMembershipInput,
+  condition?: ModelGitHubTeamMembershipConditionInput | null,
+};
+
+export type UpdateGitHubTeamMembershipMutation = {
+  updateGitHubTeamMembership?:  {
+    __typename: "GitHubTeamMembership",
+    id: string,
+    createdAt: string,
+    updatedAt: string,
+    dateFrom: string,
+    dateTo?: string | null,
+    userId: string,
+    user:  {
+      __typename: "GitHubUser",
+      id: string,
+      createdAt: string,
+      updatedAt: string,
+      login: string,
+      nodeId: string,
+      apiUrl: string,
+      htmlUrl: string,
+      avatar?: string | null,
+      name?: string | null,
+      company?: string | null,
+      email?: string | null,
+    },
+    teamId: string,
+    team:  {
+      __typename: "GitHubUser",
+      id: string,
+      createdAt: string,
+      updatedAt: string,
+      login: string,
+      nodeId: string,
+      apiUrl: string,
+      htmlUrl: string,
+      avatar?: string | null,
+      name?: string | null,
+      company?: string | null,
+      email?: string | null,
+    },
+  } | null,
+};
+
+export type DeleteGitHubTeamMembershipMutationVariables = {
+  input?: DeleteGitHubTeamMembershipInput,
+  condition?: ModelGitHubTeamMembershipConditionInput | null,
+};
+
+export type DeleteGitHubTeamMembershipMutation = {
+  deleteGitHubTeamMembership?:  {
+    __typename: "GitHubTeamMembership",
+    id: string,
+    createdAt: string,
+    updatedAt: string,
+    dateFrom: string,
+    dateTo?: string | null,
+    userId: string,
+    user:  {
+      __typename: "GitHubUser",
+      id: string,
+      createdAt: string,
+      updatedAt: string,
+      login: string,
+      nodeId: string,
+      apiUrl: string,
+      htmlUrl: string,
+      avatar?: string | null,
+      name?: string | null,
+      company?: string | null,
+      email?: string | null,
+    },
+    teamId: string,
+    team:  {
+      __typename: "GitHubUser",
+      id: string,
+      createdAt: string,
+      updatedAt: string,
+      login: string,
+      nodeId: string,
+      apiUrl: string,
+      htmlUrl: string,
+      avatar?: string | null,
+      name?: string | null,
+      company?: string | null,
+      email?: string | null,
+    },
+  } | null,
+};
+
+export type CreateGitHubTeamRepositoryMutationVariables = {
+  input?: CreateGitHubTeamRepositoryInput,
+  condition?: ModelGitHubTeamRepositoryConditionInput | null,
+};
+
+export type CreateGitHubTeamRepositoryMutation = {
+  createGitHubTeamRepository?:  {
+    __typename: "GitHubTeamRepository",
+    id: string,
+    createdAt: string,
+    updatedAt: string,
+    dateFrom: string,
+    dateTo?: string | null,
+    permission: string,
+    repositoryId: string,
+    repository:  {
+      __typename: "GitHubRepository",
+      id: string,
+      createdAt: string,
+      updatedAt: string,
+      nodeId: string,
+      name: string,
+      fullName: string,
+      description?: string | null,
+      apiUrl: string,
+      htmlUrl: string,
+      gitUrl: string,
+      sshUrl: string,
+    },
+    teamId: string,
+    team:  {
+      __typename: "GitHubUser",
+      id: string,
+      createdAt: string,
+      updatedAt: string,
+      login: string,
+      nodeId: string,
+      apiUrl: string,
+      htmlUrl: string,
+      avatar?: string | null,
+      name?: string | null,
+      company?: string | null,
+      email?: string | null,
+    },
+  } | null,
+};
+
+export type UpdateGitHubTeamRepositoryMutationVariables = {
+  input?: UpdateGitHubTeamRepositoryInput,
+  condition?: ModelGitHubTeamRepositoryConditionInput | null,
+};
+
+export type UpdateGitHubTeamRepositoryMutation = {
+  updateGitHubTeamRepository?:  {
+    __typename: "GitHubTeamRepository",
+    id: string,
+    createdAt: string,
+    updatedAt: string,
+    dateFrom: string,
+    dateTo?: string | null,
+    permission: string,
+    repositoryId: string,
+    repository:  {
+      __typename: "GitHubRepository",
+      id: string,
+      createdAt: string,
+      updatedAt: string,
+      nodeId: string,
+      name: string,
+      fullName: string,
+      description?: string | null,
+      apiUrl: string,
+      htmlUrl: string,
+      gitUrl: string,
+      sshUrl: string,
+    },
+    teamId: string,
+    team:  {
+      __typename: "GitHubUser",
+      id: string,
+      createdAt: string,
+      updatedAt: string,
+      login: string,
+      nodeId: string,
+      apiUrl: string,
+      htmlUrl: string,
+      avatar?: string | null,
+      name?: string | null,
+      company?: string | null,
+      email?: string | null,
+    },
+  } | null,
+};
+
+export type DeleteGitHubTeamRepositoryMutationVariables = {
+  input?: DeleteGitHubTeamRepositoryInput,
+  condition?: ModelGitHubTeamRepositoryConditionInput | null,
+};
+
+export type DeleteGitHubTeamRepositoryMutation = {
+  deleteGitHubTeamRepository?:  {
+    __typename: "GitHubTeamRepository",
+    id: string,
+    createdAt: string,
+    updatedAt: string,
+    dateFrom: string,
+    dateTo?: string | null,
+    permission: string,
+    repositoryId: string,
+    repository:  {
+      __typename: "GitHubRepository",
+      id: string,
+      createdAt: string,
+      updatedAt: string,
+      nodeId: string,
+      name: string,
+      fullName: string,
+      description?: string | null,
+      apiUrl: string,
+      htmlUrl: string,
+      gitUrl: string,
+      sshUrl: string,
+    },
+    teamId: string,
+    team:  {
+      __typename: "GitHubUser",
+      id: string,
+      createdAt: string,
+      updatedAt: string,
+      login: string,
+      nodeId: string,
+      apiUrl: string,
+      htmlUrl: string,
+      avatar?: string | null,
+      name?: string | null,
+      company?: string | null,
+      email?: string | null,
+    },
   } | null,
 };
 
@@ -2227,6 +3379,10 @@ export type CreateGitHubUserMutation = {
     name?: string | null,
     company?: string | null,
     email?: string | null,
+    teams?:  {
+      __typename: "ModelGitHubTeamMembershipConnection",
+      nextToken?: string | null,
+    } | null,
     issuesAuthored?:  {
       __typename: "ModelGitHubIssueConnection",
       nextToken?: string | null,
@@ -2273,6 +3429,10 @@ export type UpdateGitHubUserMutation = {
     name?: string | null,
     company?: string | null,
     email?: string | null,
+    teams?:  {
+      __typename: "ModelGitHubTeamMembershipConnection",
+      nextToken?: string | null,
+    } | null,
     issuesAuthored?:  {
       __typename: "ModelGitHubIssueConnection",
       nextToken?: string | null,
@@ -2319,6 +3479,10 @@ export type DeleteGitHubUserMutation = {
     name?: string | null,
     company?: string | null,
     email?: string | null,
+    teams?:  {
+      __typename: "ModelGitHubTeamMembershipConnection",
+      nextToken?: string | null,
+    } | null,
     issuesAuthored?:  {
       __typename: "ModelGitHubIssueConnection",
       nextToken?: string | null,
@@ -2343,6 +3507,51 @@ export type DeleteGitHubUserMutation = {
       __typename: "ModelPullRequestReviewRequestConnection",
       nextToken?: string | null,
     } | null,
+  } | null,
+};
+
+export type CreateUserMutationVariables = {
+  input?: CreateUserInput,
+  condition?: ModelUserConditionInput | null,
+};
+
+export type CreateUserMutation = {
+  createUser?:  {
+    __typename: "User",
+    id: string,
+    createdAt: string,
+    updatedAt: string,
+    login: string,
+  } | null,
+};
+
+export type UpdateUserMutationVariables = {
+  input?: UpdateUserInput,
+  condition?: ModelUserConditionInput | null,
+};
+
+export type UpdateUserMutation = {
+  updateUser?:  {
+    __typename: "User",
+    id: string,
+    createdAt: string,
+    updatedAt: string,
+    login: string,
+  } | null,
+};
+
+export type DeleteUserMutationVariables = {
+  input?: DeleteUserInput,
+  condition?: ModelUserConditionInput | null,
+};
+
+export type DeleteUserMutation = {
+  deleteUser?:  {
+    __typename: "User",
+    id: string,
+    createdAt: string,
+    updatedAt: string,
+    login: string,
   } | null,
 };
 
@@ -2638,8 +3847,8 @@ export type GetGitHubIssueQuery = {
     state: GitHubIssueState,
     body: string,
     closedAt?: string | null,
-    authorId: string,
-    author:  {
+    authorId?: string | null,
+    author?:  {
       __typename: "GitHubUser",
       id: string,
       createdAt: string,
@@ -2652,9 +3861,9 @@ export type GetGitHubIssueQuery = {
       name?: string | null,
       company?: string | null,
       email?: string | null,
-    },
-    repositoryId: string,
-    repository:  {
+    } | null,
+    repositoryId?: string | null,
+    repository?:  {
       __typename: "GitHubRepository",
       id: string,
       createdAt: string,
@@ -2667,9 +3876,13 @@ export type GetGitHubIssueQuery = {
       htmlUrl: string,
       gitUrl: string,
       sshUrl: string,
-    },
+    } | null,
     assignees?:  {
       __typename: "ModelIssueAsigneeConnection",
+      nextToken?: string | null,
+    } | null,
+    labels?:  {
+      __typename: "ModelGitHubLabelIssueConnectionConnection",
       nextToken?: string | null,
     } | null,
   } | null,
@@ -2698,44 +3911,119 @@ export type ListGitHubIssuesQuery = {
       state: GitHubIssueState,
       body: string,
       closedAt?: string | null,
-      authorId: string,
-      repositoryId: string,
+      authorId?: string | null,
+      repositoryId?: string | null,
     } | null > | null,
     nextToken?: string | null,
   } | null,
 };
 
-export type GetTodoQueryVariables = {
+export type GetGitHubLabelQueryVariables = {
   id?: string,
 };
 
-export type GetTodoQuery = {
-  getTodo?:  {
-    __typename: "Todo",
+export type GetGitHubLabelQuery = {
+  getGitHubLabel?:  {
+    __typename: "GitHubLabel",
     id: string,
-    name: string,
-    description?: string | null,
     createdAt: string,
     updatedAt: string,
+    apiUrl: string,
+    name: string,
+    color: string,
+    default?: boolean | null,
+    issues?:  {
+      __typename: "ModelGitHubLabelIssueConnectionConnection",
+      nextToken?: string | null,
+    } | null,
   } | null,
 };
 
-export type ListTodosQueryVariables = {
-  filter?: ModelTodoFilterInput | null,
+export type ListGitHubLabelsQueryVariables = {
+  filter?: ModelGitHubLabelFilterInput | null,
   limit?: number | null,
   nextToken?: string | null,
 };
 
-export type ListTodosQuery = {
-  listTodos?:  {
-    __typename: "ModelTodoConnection",
+export type ListGitHubLabelsQuery = {
+  listGitHubLabels?:  {
+    __typename: "ModelGitHubLabelConnection",
     items?:  Array< {
-      __typename: "Todo",
+      __typename: "GitHubLabel",
       id: string,
-      name: string,
-      description?: string | null,
       createdAt: string,
       updatedAt: string,
+      apiUrl: string,
+      name: string,
+      color: string,
+      default?: boolean | null,
+    } | null > | null,
+    nextToken?: string | null,
+  } | null,
+};
+
+export type GetGitHubLabelIssueConnectionQueryVariables = {
+  id?: string,
+};
+
+export type GetGitHubLabelIssueConnectionQuery = {
+  getGitHubLabelIssueConnection?:  {
+    __typename: "GitHubLabelIssueConnection",
+    id: string,
+    createdAt: string,
+    updatedAt: string,
+    dateFrom: string,
+    dateTo?: string | null,
+    issueId: string,
+    issue:  {
+      __typename: "GitHubIssue",
+      id: string,
+      createdAt: string,
+      updatedAt: string,
+      nodeId: string,
+      apiUrl: string,
+      htmlUrl: string,
+      title: string,
+      number: number,
+      locked: boolean,
+      state: GitHubIssueState,
+      body: string,
+      closedAt?: string | null,
+      authorId?: string | null,
+      repositoryId?: string | null,
+    },
+    labelId: string,
+    label:  {
+      __typename: "GitHubLabel",
+      id: string,
+      createdAt: string,
+      updatedAt: string,
+      apiUrl: string,
+      name: string,
+      color: string,
+      default?: boolean | null,
+    },
+  } | null,
+};
+
+export type ListGitHubLabelIssueConnectionsQueryVariables = {
+  filter?: ModelGitHubLabelIssueConnectionFilterInput | null,
+  limit?: number | null,
+  nextToken?: string | null,
+};
+
+export type ListGitHubLabelIssueConnectionsQuery = {
+  listGitHubLabelIssueConnections?:  {
+    __typename: "ModelGitHubLabelIssueConnectionConnection",
+    items?:  Array< {
+      __typename: "GitHubLabelIssueConnection",
+      id: string,
+      createdAt: string,
+      updatedAt: string,
+      dateFrom: string,
+      dateTo?: string | null,
+      issueId: string,
+      labelId: string,
     } | null > | null,
     nextToken?: string | null,
   } | null,
@@ -2757,6 +4045,7 @@ export type GetGitHubOrganizationQuery = {
     apiUrl: string,
     avatar?: string | null,
     email?: string | null,
+    description?: string | null,
   } | null,
 };
 
@@ -2782,6 +4071,7 @@ export type ListGitHubOrganizationsQuery = {
       apiUrl: string,
       avatar?: string | null,
       email?: string | null,
+      description?: string | null,
     } | null > | null,
     nextToken?: string | null,
   } | null,
@@ -3060,6 +4350,14 @@ export type GetGitHubRepositoryQuery = {
     htmlUrl: string,
     gitUrl: string,
     sshUrl: string,
+    stars?:  {
+      __typename: "ModelGitHubStarConnection",
+      nextToken?: string | null,
+    } | null,
+    teams?:  {
+      __typename: "ModelGitHubTeamRepositoryConnection",
+      nextToken?: string | null,
+    } | null,
     issues?:  {
       __typename: "ModelGitHubIssueConnection",
       nextToken?: string | null,
@@ -3102,9 +4400,274 @@ export type ListGitHubRepositorysQuery = {
   } | null,
 };
 
+export type GetGitHubStarQueryVariables = {
+  repositoryId?: string,
+  userId?: string,
+};
+
+export type GetGitHubStarQuery = {
+  getGitHubStar?:  {
+    __typename: "GitHubStar",
+    id: string,
+    createdAt: string,
+    updatedAt: string,
+    dateFrom: string,
+    dateTo?: string | null,
+    repositoryId: string,
+    repository:  {
+      __typename: "GitHubRepository",
+      id: string,
+      createdAt: string,
+      updatedAt: string,
+      nodeId: string,
+      name: string,
+      fullName: string,
+      description?: string | null,
+      apiUrl: string,
+      htmlUrl: string,
+      gitUrl: string,
+      sshUrl: string,
+    },
+    userId: string,
+    user:  {
+      __typename: "GitHubUser",
+      id: string,
+      createdAt: string,
+      updatedAt: string,
+      login: string,
+      nodeId: string,
+      apiUrl: string,
+      htmlUrl: string,
+      avatar?: string | null,
+      name?: string | null,
+      company?: string | null,
+      email?: string | null,
+    },
+  } | null,
+};
+
+export type ListGitHubStarsQueryVariables = {
+  repositoryId?: string | null,
+  userId?: ModelIDKeyConditionInput | null,
+  filter?: ModelGitHubStarFilterInput | null,
+  limit?: number | null,
+  nextToken?: string | null,
+  sortDirection?: ModelSortDirection | null,
+};
+
+export type ListGitHubStarsQuery = {
+  listGitHubStars?:  {
+    __typename: "ModelGitHubStarConnection",
+    items?:  Array< {
+      __typename: "GitHubStar",
+      id: string,
+      createdAt: string,
+      updatedAt: string,
+      dateFrom: string,
+      dateTo?: string | null,
+      repositoryId: string,
+      userId: string,
+    } | null > | null,
+    nextToken?: string | null,
+  } | null,
+};
+
+export type GetGitHubTeamQueryVariables = {
+  id?: string,
+};
+
+export type GetGitHubTeamQuery = {
+  getGitHubTeam?:  {
+    __typename: "GitHubTeam",
+    id: string,
+    createdAt: string,
+    updatedAt: string,
+    name: string,
+    nodeId: string,
+    description?: string | null,
+    slug: string,
+    privacy?: string | null,
+    apiUrl: string,
+    htmlUrl: string,
+    membersUrl: string,
+    members?:  {
+      __typename: "ModelGitHubTeamMembershipConnection",
+      nextToken?: string | null,
+    } | null,
+    repositories?:  {
+      __typename: "ModelGitHubTeamRepositoryConnection",
+      nextToken?: string | null,
+    } | null,
+  } | null,
+};
+
+export type ListGitHubTeamsQueryVariables = {
+  filter?: ModelGitHubTeamFilterInput | null,
+  limit?: number | null,
+  nextToken?: string | null,
+};
+
+export type ListGitHubTeamsQuery = {
+  listGitHubTeams?:  {
+    __typename: "ModelGitHubTeamConnection",
+    items?:  Array< {
+      __typename: "GitHubTeam",
+      id: string,
+      createdAt: string,
+      updatedAt: string,
+      name: string,
+      nodeId: string,
+      description?: string | null,
+      slug: string,
+      privacy?: string | null,
+      apiUrl: string,
+      htmlUrl: string,
+      membersUrl: string,
+    } | null > | null,
+    nextToken?: string | null,
+  } | null,
+};
+
+export type GetGitHubTeamMembershipQueryVariables = {
+  id?: string,
+};
+
+export type GetGitHubTeamMembershipQuery = {
+  getGitHubTeamMembership?:  {
+    __typename: "GitHubTeamMembership",
+    id: string,
+    createdAt: string,
+    updatedAt: string,
+    dateFrom: string,
+    dateTo?: string | null,
+    userId: string,
+    user:  {
+      __typename: "GitHubUser",
+      id: string,
+      createdAt: string,
+      updatedAt: string,
+      login: string,
+      nodeId: string,
+      apiUrl: string,
+      htmlUrl: string,
+      avatar?: string | null,
+      name?: string | null,
+      company?: string | null,
+      email?: string | null,
+    },
+    teamId: string,
+    team:  {
+      __typename: "GitHubUser",
+      id: string,
+      createdAt: string,
+      updatedAt: string,
+      login: string,
+      nodeId: string,
+      apiUrl: string,
+      htmlUrl: string,
+      avatar?: string | null,
+      name?: string | null,
+      company?: string | null,
+      email?: string | null,
+    },
+  } | null,
+};
+
+export type ListGitHubTeamMembershipsQueryVariables = {
+  filter?: ModelGitHubTeamMembershipFilterInput | null,
+  limit?: number | null,
+  nextToken?: string | null,
+};
+
+export type ListGitHubTeamMembershipsQuery = {
+  listGitHubTeamMemberships?:  {
+    __typename: "ModelGitHubTeamMembershipConnection",
+    items?:  Array< {
+      __typename: "GitHubTeamMembership",
+      id: string,
+      createdAt: string,
+      updatedAt: string,
+      dateFrom: string,
+      dateTo?: string | null,
+      userId: string,
+      teamId: string,
+    } | null > | null,
+    nextToken?: string | null,
+  } | null,
+};
+
+export type GetGitHubTeamRepositoryQueryVariables = {
+  id?: string,
+};
+
+export type GetGitHubTeamRepositoryQuery = {
+  getGitHubTeamRepository?:  {
+    __typename: "GitHubTeamRepository",
+    id: string,
+    createdAt: string,
+    updatedAt: string,
+    dateFrom: string,
+    dateTo?: string | null,
+    permission: string,
+    repositoryId: string,
+    repository:  {
+      __typename: "GitHubRepository",
+      id: string,
+      createdAt: string,
+      updatedAt: string,
+      nodeId: string,
+      name: string,
+      fullName: string,
+      description?: string | null,
+      apiUrl: string,
+      htmlUrl: string,
+      gitUrl: string,
+      sshUrl: string,
+    },
+    teamId: string,
+    team:  {
+      __typename: "GitHubUser",
+      id: string,
+      createdAt: string,
+      updatedAt: string,
+      login: string,
+      nodeId: string,
+      apiUrl: string,
+      htmlUrl: string,
+      avatar?: string | null,
+      name?: string | null,
+      company?: string | null,
+      email?: string | null,
+    },
+  } | null,
+};
+
+export type ListGitHubTeamRepositorysQueryVariables = {
+  filter?: ModelGitHubTeamRepositoryFilterInput | null,
+  limit?: number | null,
+  nextToken?: string | null,
+};
+
+export type ListGitHubTeamRepositorysQuery = {
+  listGitHubTeamRepositorys?:  {
+    __typename: "ModelGitHubTeamRepositoryConnection",
+    items?:  Array< {
+      __typename: "GitHubTeamRepository",
+      id: string,
+      createdAt: string,
+      updatedAt: string,
+      dateFrom: string,
+      dateTo?: string | null,
+      permission: string,
+      repositoryId: string,
+      teamId: string,
+    } | null > | null,
+    nextToken?: string | null,
+  } | null,
+};
+
 export type GetGitHubUserQueryVariables = {
   id?: string,
-  login?: string,
 };
 
 export type GetGitHubUserQuery = {
@@ -3121,6 +4684,10 @@ export type GetGitHubUserQuery = {
     name?: string | null,
     company?: string | null,
     email?: string | null,
+    teams?:  {
+      __typename: "ModelGitHubTeamMembershipConnection",
+      nextToken?: string | null,
+    } | null,
     issuesAuthored?:  {
       __typename: "ModelGitHubIssueConnection",
       nextToken?: string | null,
@@ -3149,12 +4716,9 @@ export type GetGitHubUserQuery = {
 };
 
 export type ListGitHubUsersQueryVariables = {
-  id?: string | null,
-  login?: ModelStringKeyConditionInput | null,
   filter?: ModelGitHubUserFilterInput | null,
   limit?: number | null,
   nextToken?: string | null,
-  sortDirection?: ModelSortDirection | null,
 };
 
 export type ListGitHubUsersQuery = {
@@ -3173,6 +4737,40 @@ export type ListGitHubUsersQuery = {
       name?: string | null,
       company?: string | null,
       email?: string | null,
+    } | null > | null,
+    nextToken?: string | null,
+  } | null,
+};
+
+export type GetUserQueryVariables = {
+  id?: string,
+};
+
+export type GetUserQuery = {
+  getUser?:  {
+    __typename: "User",
+    id: string,
+    createdAt: string,
+    updatedAt: string,
+    login: string,
+  } | null,
+};
+
+export type ListUsersQueryVariables = {
+  filter?: ModelUserFilterInput | null,
+  limit?: number | null,
+  nextToken?: string | null,
+};
+
+export type ListUsersQuery = {
+  listUsers?:  {
+    __typename: "ModelUserConnection",
+    items?:  Array< {
+      __typename: "User",
+      id: string,
+      createdAt: string,
+      updatedAt: string,
+      login: string,
     } | null > | null,
     nextToken?: string | null,
   } | null,
@@ -3295,6 +4893,57 @@ export type ListPullRequestReviewRequestsQuery = {
   } | null,
 };
 
+export type UserByGitHubLoginQueryVariables = {
+  login?: string | null,
+  sortDirection?: ModelSortDirection | null,
+  filter?: ModelGitHubUserFilterInput | null,
+  limit?: number | null,
+  nextToken?: string | null,
+};
+
+export type UserByGitHubLoginQuery = {
+  userByGitHubLogin?:  {
+    __typename: "ModelGitHubUserConnection",
+    items?:  Array< {
+      __typename: "GitHubUser",
+      id: string,
+      createdAt: string,
+      updatedAt: string,
+      login: string,
+      nodeId: string,
+      apiUrl: string,
+      htmlUrl: string,
+      avatar?: string | null,
+      name?: string | null,
+      company?: string | null,
+      email?: string | null,
+    } | null > | null,
+    nextToken?: string | null,
+  } | null,
+};
+
+export type UserByGitHubLoginFMLQueryVariables = {
+  login?: string | null,
+  sortDirection?: ModelSortDirection | null,
+  filter?: ModelUserFilterInput | null,
+  limit?: number | null,
+  nextToken?: string | null,
+};
+
+export type UserByGitHubLoginFMLQuery = {
+  userByGitHubLoginFML?:  {
+    __typename: "ModelUserConnection",
+    items?:  Array< {
+      __typename: "User",
+      id: string,
+      createdAt: string,
+      updatedAt: string,
+      login: string,
+    } | null > | null,
+    nextToken?: string | null,
+  } | null,
+};
+
 export type OnCreateGitHubIssueSubscription = {
   onCreateGitHubIssue?:  {
     __typename: "GitHubIssue",
@@ -3310,8 +4959,8 @@ export type OnCreateGitHubIssueSubscription = {
     state: GitHubIssueState,
     body: string,
     closedAt?: string | null,
-    authorId: string,
-    author:  {
+    authorId?: string | null,
+    author?:  {
       __typename: "GitHubUser",
       id: string,
       createdAt: string,
@@ -3324,9 +4973,9 @@ export type OnCreateGitHubIssueSubscription = {
       name?: string | null,
       company?: string | null,
       email?: string | null,
-    },
-    repositoryId: string,
-    repository:  {
+    } | null,
+    repositoryId?: string | null,
+    repository?:  {
       __typename: "GitHubRepository",
       id: string,
       createdAt: string,
@@ -3339,9 +4988,13 @@ export type OnCreateGitHubIssueSubscription = {
       htmlUrl: string,
       gitUrl: string,
       sshUrl: string,
-    },
+    } | null,
     assignees?:  {
       __typename: "ModelIssueAsigneeConnection",
+      nextToken?: string | null,
+    } | null,
+    labels?:  {
+      __typename: "ModelGitHubLabelIssueConnectionConnection",
       nextToken?: string | null,
     } | null,
   } | null,
@@ -3362,8 +5015,8 @@ export type OnUpdateGitHubIssueSubscription = {
     state: GitHubIssueState,
     body: string,
     closedAt?: string | null,
-    authorId: string,
-    author:  {
+    authorId?: string | null,
+    author?:  {
       __typename: "GitHubUser",
       id: string,
       createdAt: string,
@@ -3376,9 +5029,9 @@ export type OnUpdateGitHubIssueSubscription = {
       name?: string | null,
       company?: string | null,
       email?: string | null,
-    },
-    repositoryId: string,
-    repository:  {
+    } | null,
+    repositoryId?: string | null,
+    repository?:  {
       __typename: "GitHubRepository",
       id: string,
       createdAt: string,
@@ -3391,9 +5044,13 @@ export type OnUpdateGitHubIssueSubscription = {
       htmlUrl: string,
       gitUrl: string,
       sshUrl: string,
-    },
+    } | null,
     assignees?:  {
       __typename: "ModelIssueAsigneeConnection",
+      nextToken?: string | null,
+    } | null,
+    labels?:  {
+      __typename: "ModelGitHubLabelIssueConnectionConnection",
       nextToken?: string | null,
     } | null,
   } | null,
@@ -3414,8 +5071,8 @@ export type OnDeleteGitHubIssueSubscription = {
     state: GitHubIssueState,
     body: string,
     closedAt?: string | null,
-    authorId: string,
-    author:  {
+    authorId?: string | null,
+    author?:  {
       __typename: "GitHubUser",
       id: string,
       createdAt: string,
@@ -3428,9 +5085,9 @@ export type OnDeleteGitHubIssueSubscription = {
       name?: string | null,
       company?: string | null,
       email?: string | null,
-    },
-    repositoryId: string,
-    repository:  {
+    } | null,
+    repositoryId?: string | null,
+    repository?:  {
       __typename: "GitHubRepository",
       id: string,
       createdAt: string,
@@ -3443,9 +5100,13 @@ export type OnDeleteGitHubIssueSubscription = {
       htmlUrl: string,
       gitUrl: string,
       sshUrl: string,
-    },
+    } | null,
     assignees?:  {
       __typename: "ModelIssueAsigneeConnection",
+      nextToken?: string | null,
+    } | null,
+    labels?:  {
+      __typename: "ModelGitHubLabelIssueConnectionConnection",
       nextToken?: string | null,
     } | null,
   } | null,
@@ -3475,8 +5136,8 @@ export type OnCreateIssueAsigneeSubscription = {
       state: GitHubIssueState,
       body: string,
       closedAt?: string | null,
-      authorId: string,
-      repositoryId: string,
+      authorId?: string | null,
+      repositoryId?: string | null,
     },
     user:  {
       __typename: "GitHubUser",
@@ -3519,8 +5180,8 @@ export type OnUpdateIssueAsigneeSubscription = {
       state: GitHubIssueState,
       body: string,
       closedAt?: string | null,
-      authorId: string,
-      repositoryId: string,
+      authorId?: string | null,
+      repositoryId?: string | null,
     },
     user:  {
       __typename: "GitHubUser",
@@ -3563,8 +5224,8 @@ export type OnDeleteIssueAsigneeSubscription = {
       state: GitHubIssueState,
       body: string,
       closedAt?: string | null,
-      authorId: string,
-      repositoryId: string,
+      authorId?: string | null,
+      repositoryId?: string | null,
     },
     user:  {
       __typename: "GitHubUser",
@@ -3583,36 +5244,174 @@ export type OnDeleteIssueAsigneeSubscription = {
   } | null,
 };
 
-export type OnCreateTodoSubscription = {
-  onCreateTodo?:  {
-    __typename: "Todo",
+export type OnCreateGitHubLabelSubscription = {
+  onCreateGitHubLabel?:  {
+    __typename: "GitHubLabel",
     id: string,
-    name: string,
-    description?: string | null,
     createdAt: string,
     updatedAt: string,
+    apiUrl: string,
+    name: string,
+    color: string,
+    default?: boolean | null,
+    issues?:  {
+      __typename: "ModelGitHubLabelIssueConnectionConnection",
+      nextToken?: string | null,
+    } | null,
   } | null,
 };
 
-export type OnUpdateTodoSubscription = {
-  onUpdateTodo?:  {
-    __typename: "Todo",
+export type OnUpdateGitHubLabelSubscription = {
+  onUpdateGitHubLabel?:  {
+    __typename: "GitHubLabel",
     id: string,
-    name: string,
-    description?: string | null,
     createdAt: string,
     updatedAt: string,
+    apiUrl: string,
+    name: string,
+    color: string,
+    default?: boolean | null,
+    issues?:  {
+      __typename: "ModelGitHubLabelIssueConnectionConnection",
+      nextToken?: string | null,
+    } | null,
   } | null,
 };
 
-export type OnDeleteTodoSubscription = {
-  onDeleteTodo?:  {
-    __typename: "Todo",
+export type OnDeleteGitHubLabelSubscription = {
+  onDeleteGitHubLabel?:  {
+    __typename: "GitHubLabel",
     id: string,
-    name: string,
-    description?: string | null,
     createdAt: string,
     updatedAt: string,
+    apiUrl: string,
+    name: string,
+    color: string,
+    default?: boolean | null,
+    issues?:  {
+      __typename: "ModelGitHubLabelIssueConnectionConnection",
+      nextToken?: string | null,
+    } | null,
+  } | null,
+};
+
+export type OnCreateGitHubLabelIssueConnectionSubscription = {
+  onCreateGitHubLabelIssueConnection?:  {
+    __typename: "GitHubLabelIssueConnection",
+    id: string,
+    createdAt: string,
+    updatedAt: string,
+    dateFrom: string,
+    dateTo?: string | null,
+    issueId: string,
+    issue:  {
+      __typename: "GitHubIssue",
+      id: string,
+      createdAt: string,
+      updatedAt: string,
+      nodeId: string,
+      apiUrl: string,
+      htmlUrl: string,
+      title: string,
+      number: number,
+      locked: boolean,
+      state: GitHubIssueState,
+      body: string,
+      closedAt?: string | null,
+      authorId?: string | null,
+      repositoryId?: string | null,
+    },
+    labelId: string,
+    label:  {
+      __typename: "GitHubLabel",
+      id: string,
+      createdAt: string,
+      updatedAt: string,
+      apiUrl: string,
+      name: string,
+      color: string,
+      default?: boolean | null,
+    },
+  } | null,
+};
+
+export type OnUpdateGitHubLabelIssueConnectionSubscription = {
+  onUpdateGitHubLabelIssueConnection?:  {
+    __typename: "GitHubLabelIssueConnection",
+    id: string,
+    createdAt: string,
+    updatedAt: string,
+    dateFrom: string,
+    dateTo?: string | null,
+    issueId: string,
+    issue:  {
+      __typename: "GitHubIssue",
+      id: string,
+      createdAt: string,
+      updatedAt: string,
+      nodeId: string,
+      apiUrl: string,
+      htmlUrl: string,
+      title: string,
+      number: number,
+      locked: boolean,
+      state: GitHubIssueState,
+      body: string,
+      closedAt?: string | null,
+      authorId?: string | null,
+      repositoryId?: string | null,
+    },
+    labelId: string,
+    label:  {
+      __typename: "GitHubLabel",
+      id: string,
+      createdAt: string,
+      updatedAt: string,
+      apiUrl: string,
+      name: string,
+      color: string,
+      default?: boolean | null,
+    },
+  } | null,
+};
+
+export type OnDeleteGitHubLabelIssueConnectionSubscription = {
+  onDeleteGitHubLabelIssueConnection?:  {
+    __typename: "GitHubLabelIssueConnection",
+    id: string,
+    createdAt: string,
+    updatedAt: string,
+    dateFrom: string,
+    dateTo?: string | null,
+    issueId: string,
+    issue:  {
+      __typename: "GitHubIssue",
+      id: string,
+      createdAt: string,
+      updatedAt: string,
+      nodeId: string,
+      apiUrl: string,
+      htmlUrl: string,
+      title: string,
+      number: number,
+      locked: boolean,
+      state: GitHubIssueState,
+      body: string,
+      closedAt?: string | null,
+      authorId?: string | null,
+      repositoryId?: string | null,
+    },
+    labelId: string,
+    label:  {
+      __typename: "GitHubLabel",
+      id: string,
+      createdAt: string,
+      updatedAt: string,
+      apiUrl: string,
+      name: string,
+      color: string,
+      default?: boolean | null,
+    },
   } | null,
 };
 
@@ -3627,6 +5426,7 @@ export type OnCreateGitHubOrganizationSubscription = {
     apiUrl: string,
     avatar?: string | null,
     email?: string | null,
+    description?: string | null,
   } | null,
 };
 
@@ -3641,6 +5441,7 @@ export type OnUpdateGitHubOrganizationSubscription = {
     apiUrl: string,
     avatar?: string | null,
     email?: string | null,
+    description?: string | null,
   } | null,
 };
 
@@ -3655,6 +5456,7 @@ export type OnDeleteGitHubOrganizationSubscription = {
     apiUrl: string,
     avatar?: string | null,
     email?: string | null,
+    description?: string | null,
   } | null,
 };
 
@@ -4275,6 +6077,14 @@ export type OnCreateGitHubRepositorySubscription = {
     htmlUrl: string,
     gitUrl: string,
     sshUrl: string,
+    stars?:  {
+      __typename: "ModelGitHubStarConnection",
+      nextToken?: string | null,
+    } | null,
+    teams?:  {
+      __typename: "ModelGitHubTeamRepositoryConnection",
+      nextToken?: string | null,
+    } | null,
     issues?:  {
       __typename: "ModelGitHubIssueConnection",
       nextToken?: string | null,
@@ -4304,6 +6114,14 @@ export type OnUpdateGitHubRepositorySubscription = {
     htmlUrl: string,
     gitUrl: string,
     sshUrl: string,
+    stars?:  {
+      __typename: "ModelGitHubStarConnection",
+      nextToken?: string | null,
+    } | null,
+    teams?:  {
+      __typename: "ModelGitHubTeamRepositoryConnection",
+      nextToken?: string | null,
+    } | null,
     issues?:  {
       __typename: "ModelGitHubIssueConnection",
       nextToken?: string | null,
@@ -4333,6 +6151,14 @@ export type OnDeleteGitHubRepositorySubscription = {
     htmlUrl: string,
     gitUrl: string,
     sshUrl: string,
+    stars?:  {
+      __typename: "ModelGitHubStarConnection",
+      nextToken?: string | null,
+    } | null,
+    teams?:  {
+      __typename: "ModelGitHubTeamRepositoryConnection",
+      nextToken?: string | null,
+    } | null,
     issues?:  {
       __typename: "ModelGitHubIssueConnection",
       nextToken?: string | null,
@@ -4345,6 +6171,453 @@ export type OnDeleteGitHubRepositorySubscription = {
       __typename: "ModelPullRequestReviewRequestConnection",
       nextToken?: string | null,
     } | null,
+  } | null,
+};
+
+export type OnCreateGitHubStarSubscription = {
+  onCreateGitHubStar?:  {
+    __typename: "GitHubStar",
+    id: string,
+    createdAt: string,
+    updatedAt: string,
+    dateFrom: string,
+    dateTo?: string | null,
+    repositoryId: string,
+    repository:  {
+      __typename: "GitHubRepository",
+      id: string,
+      createdAt: string,
+      updatedAt: string,
+      nodeId: string,
+      name: string,
+      fullName: string,
+      description?: string | null,
+      apiUrl: string,
+      htmlUrl: string,
+      gitUrl: string,
+      sshUrl: string,
+    },
+    userId: string,
+    user:  {
+      __typename: "GitHubUser",
+      id: string,
+      createdAt: string,
+      updatedAt: string,
+      login: string,
+      nodeId: string,
+      apiUrl: string,
+      htmlUrl: string,
+      avatar?: string | null,
+      name?: string | null,
+      company?: string | null,
+      email?: string | null,
+    },
+  } | null,
+};
+
+export type OnUpdateGitHubStarSubscription = {
+  onUpdateGitHubStar?:  {
+    __typename: "GitHubStar",
+    id: string,
+    createdAt: string,
+    updatedAt: string,
+    dateFrom: string,
+    dateTo?: string | null,
+    repositoryId: string,
+    repository:  {
+      __typename: "GitHubRepository",
+      id: string,
+      createdAt: string,
+      updatedAt: string,
+      nodeId: string,
+      name: string,
+      fullName: string,
+      description?: string | null,
+      apiUrl: string,
+      htmlUrl: string,
+      gitUrl: string,
+      sshUrl: string,
+    },
+    userId: string,
+    user:  {
+      __typename: "GitHubUser",
+      id: string,
+      createdAt: string,
+      updatedAt: string,
+      login: string,
+      nodeId: string,
+      apiUrl: string,
+      htmlUrl: string,
+      avatar?: string | null,
+      name?: string | null,
+      company?: string | null,
+      email?: string | null,
+    },
+  } | null,
+};
+
+export type OnDeleteGitHubStarSubscription = {
+  onDeleteGitHubStar?:  {
+    __typename: "GitHubStar",
+    id: string,
+    createdAt: string,
+    updatedAt: string,
+    dateFrom: string,
+    dateTo?: string | null,
+    repositoryId: string,
+    repository:  {
+      __typename: "GitHubRepository",
+      id: string,
+      createdAt: string,
+      updatedAt: string,
+      nodeId: string,
+      name: string,
+      fullName: string,
+      description?: string | null,
+      apiUrl: string,
+      htmlUrl: string,
+      gitUrl: string,
+      sshUrl: string,
+    },
+    userId: string,
+    user:  {
+      __typename: "GitHubUser",
+      id: string,
+      createdAt: string,
+      updatedAt: string,
+      login: string,
+      nodeId: string,
+      apiUrl: string,
+      htmlUrl: string,
+      avatar?: string | null,
+      name?: string | null,
+      company?: string | null,
+      email?: string | null,
+    },
+  } | null,
+};
+
+export type OnCreateGitHubTeamSubscription = {
+  onCreateGitHubTeam?:  {
+    __typename: "GitHubTeam",
+    id: string,
+    createdAt: string,
+    updatedAt: string,
+    name: string,
+    nodeId: string,
+    description?: string | null,
+    slug: string,
+    privacy?: string | null,
+    apiUrl: string,
+    htmlUrl: string,
+    membersUrl: string,
+    members?:  {
+      __typename: "ModelGitHubTeamMembershipConnection",
+      nextToken?: string | null,
+    } | null,
+    repositories?:  {
+      __typename: "ModelGitHubTeamRepositoryConnection",
+      nextToken?: string | null,
+    } | null,
+  } | null,
+};
+
+export type OnUpdateGitHubTeamSubscription = {
+  onUpdateGitHubTeam?:  {
+    __typename: "GitHubTeam",
+    id: string,
+    createdAt: string,
+    updatedAt: string,
+    name: string,
+    nodeId: string,
+    description?: string | null,
+    slug: string,
+    privacy?: string | null,
+    apiUrl: string,
+    htmlUrl: string,
+    membersUrl: string,
+    members?:  {
+      __typename: "ModelGitHubTeamMembershipConnection",
+      nextToken?: string | null,
+    } | null,
+    repositories?:  {
+      __typename: "ModelGitHubTeamRepositoryConnection",
+      nextToken?: string | null,
+    } | null,
+  } | null,
+};
+
+export type OnDeleteGitHubTeamSubscription = {
+  onDeleteGitHubTeam?:  {
+    __typename: "GitHubTeam",
+    id: string,
+    createdAt: string,
+    updatedAt: string,
+    name: string,
+    nodeId: string,
+    description?: string | null,
+    slug: string,
+    privacy?: string | null,
+    apiUrl: string,
+    htmlUrl: string,
+    membersUrl: string,
+    members?:  {
+      __typename: "ModelGitHubTeamMembershipConnection",
+      nextToken?: string | null,
+    } | null,
+    repositories?:  {
+      __typename: "ModelGitHubTeamRepositoryConnection",
+      nextToken?: string | null,
+    } | null,
+  } | null,
+};
+
+export type OnCreateGitHubTeamMembershipSubscription = {
+  onCreateGitHubTeamMembership?:  {
+    __typename: "GitHubTeamMembership",
+    id: string,
+    createdAt: string,
+    updatedAt: string,
+    dateFrom: string,
+    dateTo?: string | null,
+    userId: string,
+    user:  {
+      __typename: "GitHubUser",
+      id: string,
+      createdAt: string,
+      updatedAt: string,
+      login: string,
+      nodeId: string,
+      apiUrl: string,
+      htmlUrl: string,
+      avatar?: string | null,
+      name?: string | null,
+      company?: string | null,
+      email?: string | null,
+    },
+    teamId: string,
+    team:  {
+      __typename: "GitHubUser",
+      id: string,
+      createdAt: string,
+      updatedAt: string,
+      login: string,
+      nodeId: string,
+      apiUrl: string,
+      htmlUrl: string,
+      avatar?: string | null,
+      name?: string | null,
+      company?: string | null,
+      email?: string | null,
+    },
+  } | null,
+};
+
+export type OnUpdateGitHubTeamMembershipSubscription = {
+  onUpdateGitHubTeamMembership?:  {
+    __typename: "GitHubTeamMembership",
+    id: string,
+    createdAt: string,
+    updatedAt: string,
+    dateFrom: string,
+    dateTo?: string | null,
+    userId: string,
+    user:  {
+      __typename: "GitHubUser",
+      id: string,
+      createdAt: string,
+      updatedAt: string,
+      login: string,
+      nodeId: string,
+      apiUrl: string,
+      htmlUrl: string,
+      avatar?: string | null,
+      name?: string | null,
+      company?: string | null,
+      email?: string | null,
+    },
+    teamId: string,
+    team:  {
+      __typename: "GitHubUser",
+      id: string,
+      createdAt: string,
+      updatedAt: string,
+      login: string,
+      nodeId: string,
+      apiUrl: string,
+      htmlUrl: string,
+      avatar?: string | null,
+      name?: string | null,
+      company?: string | null,
+      email?: string | null,
+    },
+  } | null,
+};
+
+export type OnDeleteGitHubTeamMembershipSubscription = {
+  onDeleteGitHubTeamMembership?:  {
+    __typename: "GitHubTeamMembership",
+    id: string,
+    createdAt: string,
+    updatedAt: string,
+    dateFrom: string,
+    dateTo?: string | null,
+    userId: string,
+    user:  {
+      __typename: "GitHubUser",
+      id: string,
+      createdAt: string,
+      updatedAt: string,
+      login: string,
+      nodeId: string,
+      apiUrl: string,
+      htmlUrl: string,
+      avatar?: string | null,
+      name?: string | null,
+      company?: string | null,
+      email?: string | null,
+    },
+    teamId: string,
+    team:  {
+      __typename: "GitHubUser",
+      id: string,
+      createdAt: string,
+      updatedAt: string,
+      login: string,
+      nodeId: string,
+      apiUrl: string,
+      htmlUrl: string,
+      avatar?: string | null,
+      name?: string | null,
+      company?: string | null,
+      email?: string | null,
+    },
+  } | null,
+};
+
+export type OnCreateGitHubTeamRepositorySubscription = {
+  onCreateGitHubTeamRepository?:  {
+    __typename: "GitHubTeamRepository",
+    id: string,
+    createdAt: string,
+    updatedAt: string,
+    dateFrom: string,
+    dateTo?: string | null,
+    permission: string,
+    repositoryId: string,
+    repository:  {
+      __typename: "GitHubRepository",
+      id: string,
+      createdAt: string,
+      updatedAt: string,
+      nodeId: string,
+      name: string,
+      fullName: string,
+      description?: string | null,
+      apiUrl: string,
+      htmlUrl: string,
+      gitUrl: string,
+      sshUrl: string,
+    },
+    teamId: string,
+    team:  {
+      __typename: "GitHubUser",
+      id: string,
+      createdAt: string,
+      updatedAt: string,
+      login: string,
+      nodeId: string,
+      apiUrl: string,
+      htmlUrl: string,
+      avatar?: string | null,
+      name?: string | null,
+      company?: string | null,
+      email?: string | null,
+    },
+  } | null,
+};
+
+export type OnUpdateGitHubTeamRepositorySubscription = {
+  onUpdateGitHubTeamRepository?:  {
+    __typename: "GitHubTeamRepository",
+    id: string,
+    createdAt: string,
+    updatedAt: string,
+    dateFrom: string,
+    dateTo?: string | null,
+    permission: string,
+    repositoryId: string,
+    repository:  {
+      __typename: "GitHubRepository",
+      id: string,
+      createdAt: string,
+      updatedAt: string,
+      nodeId: string,
+      name: string,
+      fullName: string,
+      description?: string | null,
+      apiUrl: string,
+      htmlUrl: string,
+      gitUrl: string,
+      sshUrl: string,
+    },
+    teamId: string,
+    team:  {
+      __typename: "GitHubUser",
+      id: string,
+      createdAt: string,
+      updatedAt: string,
+      login: string,
+      nodeId: string,
+      apiUrl: string,
+      htmlUrl: string,
+      avatar?: string | null,
+      name?: string | null,
+      company?: string | null,
+      email?: string | null,
+    },
+  } | null,
+};
+
+export type OnDeleteGitHubTeamRepositorySubscription = {
+  onDeleteGitHubTeamRepository?:  {
+    __typename: "GitHubTeamRepository",
+    id: string,
+    createdAt: string,
+    updatedAt: string,
+    dateFrom: string,
+    dateTo?: string | null,
+    permission: string,
+    repositoryId: string,
+    repository:  {
+      __typename: "GitHubRepository",
+      id: string,
+      createdAt: string,
+      updatedAt: string,
+      nodeId: string,
+      name: string,
+      fullName: string,
+      description?: string | null,
+      apiUrl: string,
+      htmlUrl: string,
+      gitUrl: string,
+      sshUrl: string,
+    },
+    teamId: string,
+    team:  {
+      __typename: "GitHubUser",
+      id: string,
+      createdAt: string,
+      updatedAt: string,
+      login: string,
+      nodeId: string,
+      apiUrl: string,
+      htmlUrl: string,
+      avatar?: string | null,
+      name?: string | null,
+      company?: string | null,
+      email?: string | null,
+    },
   } | null,
 };
 
@@ -4362,6 +6635,10 @@ export type OnCreateGitHubUserSubscription = {
     name?: string | null,
     company?: string | null,
     email?: string | null,
+    teams?:  {
+      __typename: "ModelGitHubTeamMembershipConnection",
+      nextToken?: string | null,
+    } | null,
     issuesAuthored?:  {
       __typename: "ModelGitHubIssueConnection",
       nextToken?: string | null,
@@ -4403,6 +6680,10 @@ export type OnUpdateGitHubUserSubscription = {
     name?: string | null,
     company?: string | null,
     email?: string | null,
+    teams?:  {
+      __typename: "ModelGitHubTeamMembershipConnection",
+      nextToken?: string | null,
+    } | null,
     issuesAuthored?:  {
       __typename: "ModelGitHubIssueConnection",
       nextToken?: string | null,
@@ -4444,6 +6725,10 @@ export type OnDeleteGitHubUserSubscription = {
     name?: string | null,
     company?: string | null,
     email?: string | null,
+    teams?:  {
+      __typename: "ModelGitHubTeamMembershipConnection",
+      nextToken?: string | null,
+    } | null,
     issuesAuthored?:  {
       __typename: "ModelGitHubIssueConnection",
       nextToken?: string | null,
@@ -4468,6 +6753,36 @@ export type OnDeleteGitHubUserSubscription = {
       __typename: "ModelPullRequestReviewRequestConnection",
       nextToken?: string | null,
     } | null,
+  } | null,
+};
+
+export type OnCreateUserSubscription = {
+  onCreateUser?:  {
+    __typename: "User",
+    id: string,
+    createdAt: string,
+    updatedAt: string,
+    login: string,
+  } | null,
+};
+
+export type OnUpdateUserSubscription = {
+  onUpdateUser?:  {
+    __typename: "User",
+    id: string,
+    createdAt: string,
+    updatedAt: string,
+    login: string,
+  } | null,
+};
+
+export type OnDeleteUserSubscription = {
+  onDeleteUser?:  {
+    __typename: "User",
+    id: string,
+    createdAt: string,
+    updatedAt: string,
+    login: string,
   } | null,
 };
 

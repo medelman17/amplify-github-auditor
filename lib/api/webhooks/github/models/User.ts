@@ -20,11 +20,10 @@ import {
 async function getGitHubUserFromWebhookEvent(e: EventUser) {
   const vars: GetGitHubUserQueryVariables = {
     id: e.id.toString(),
-    login: e.login,
   };
   try {
     const result = (await API.graphql(
-      graphqlOperation(queries.getGitHubIssue, vars)
+      graphqlOperation(queries.getGitHubUser, vars)
     )) as GraphQLResult<GetGitHubUserQuery>;
     return result.data.getGitHubUser;
   } catch (err) {
@@ -44,7 +43,7 @@ async function createGitHubUserFromWebhookEvent(e: EventUser) {
   };
   try {
     const result = (await API.graphql(
-      graphqlOperation(mutations.createGitHubUser, input)
+      graphqlOperation(mutations.createGitHubUser, { input })
     )) as GraphQLResult<CreateGitHubUserMutation>;
     return result.data.createGitHubUser;
   } catch (err) {

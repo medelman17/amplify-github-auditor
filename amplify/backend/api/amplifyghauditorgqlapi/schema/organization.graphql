@@ -1,4 +1,4 @@
-type GitHubOrganization @model @key(fields: ["id", "login"]) {
+type GitHubOrganization @model @key(fields: ["id", "login"]) @aws_api_key {
   id: ID!
   createdAt: AWSDateTime!
   updatedAt: AWSDateTime!
@@ -7,4 +7,5 @@ type GitHubOrganization @model @key(fields: ["id", "login"]) {
   apiUrl: AWSURL!
   avatar: AWSURL
   email: AWSEmail
+  description: String
 }

@@ -19,14 +19,19 @@ import {
   GitHubIssueState,
   UpdateGitHubIssueInput,
   UpdateGitHubIssueMutation,
+  CreateIssueAsigneeInput,
+  CreateIssueAsigneeMutation,
+  UpdateIssueAsigneeInput,
+  UpdateIssueAsigneeMutation,
 } from "../../../../amplify/API";
 import { User } from "./User";
 
 async function getGitHubIssueFromWebhookEvent(e: EventIssue) {
   const vars: GetGitHubIssueQueryVariables = { id: e.id.toString() };
+  console.log("vars", vars);
   try {
     const result = (await API.graphql(
-      graphqlOperation(queries.getGitHubIssue, vars)
+      graphqlOperation(queries.getGitHubIssue, { id: e.id.toString() })
     )) as GraphQLResult<GetGitHubIssueQuery>;
     return result.data.getGitHubIssue;
   } catch (err) {
@@ -47,11 +52,11 @@ async function createGitHubIssueFromWebhookEvent(e: EventIssue) {
       e.state === "closed" ? GitHubIssueState.CLOSED : GitHubIssueState.OPEN,
     body: e.body,
     authorId: e.user.id.toString(),
-    repositoryId: "temp",
+    repositoryId: "na",
   };
   try {
     const result = (await API.graphql(
-      graphqlOperation(mutations.createGitHubIssue, input)
+      graphqlOperation(mutations.createGitHubIssue, { input })
     )) as GraphQLResult<CreateGitHubIssueMutation>;
     return result.data.createGitHubIssue;
   } catch (err) {
@@ -59,10 +64,10 @@ async function createGitHubIssueFromWebhookEvent(e: EventIssue) {
   }
 }
 
-async function updateGitHubIssue(i: UpdateGitHubIssueInput) {
+async function updateGitHubIssue(input: UpdateGitHubIssueInput) {
   try {
     const result = (await API.graphql(
-      graphqlOperation(mutations.updateGitHubIssue, i)
+      graphqlOperation(mutations.updateGitHubIssue, { input })
     )) as GraphQLResult<UpdateGitHubIssueMutation>;
     return result.data.updateGitHubIssue;
   } catch (err) {
@@ -78,7 +83,13 @@ export class Issue {
   async unassign(obj: User) {}
 
   async attach(obj: Repository) {
+    console.log(
+      `Attaching Issue (ID: ${this.issue.id}) to Repository (ID: ${obj.id})`
+    );
     await this.update({ repositoryId: obj.id });
+    console.log(
+      `Issue (ID: ${this.issue.id}) Attached to Repository (ID: ${obj.id})`
+    );
     return this;
   }
 
@@ -92,10 +103,15 @@ export class Issue {
 
   static async fromEvent(e: EventIssue): Promise<Issue> {
     try {
+      console.log(`Checking for Issue with ID: ${e.id}`);
       let issue = await getGitHubIssueFromWebhookEvent(e);
       if (issue === null) {
+        console.log(`Issue with ID: ${e.id} Not Found; Creating`);
+
         issue = await createGitHubIssueFromWebhookEvent(e);
+        console.log(`Issue with ID: ${e.id} Created`);
       }
+      console.log(`Issue with ID: ${e.id} Found; Returning`);
       return new Issue(issue);
     } catch (err) {
       console.log(err);

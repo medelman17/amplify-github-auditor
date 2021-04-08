@@ -1,0 +1,18 @@
+type GitHubStar
+  @model
+  @key(fields: ["repositoryId", "userId"])
+  @key(name: "byRepository", fields: ["repositoryId", "userId", "createdAt"])
+  @key(name: "byUser", fields: ["userId", "repositoryId", "createdAt"])
+  @aws_api_key {
+  id: ID!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+
+  dateFrom: AWSDateTime!
+  dateTo: AWSDateTime
+
+  repositoryId: ID!
+  repository: GitHubRepository! @connection(fields: ["repositoryId"])
+  userId: ID!
+  user: GitHubUser! @connection(fields: ["userId"])
+}

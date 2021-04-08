@@ -1,0 +1,56 @@
+type GitHubTeam @model @aws_api_key @key(name: "bySlug", fields: ["slug"]) {
+  id: ID!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+
+  name: String!
+  nodeId: String!
+  description: String
+  slug: String!
+  privacy: String
+  apiUrl: AWSURL!
+  htmlUrl: AWSURL!
+  membersUrl: AWSURL!
+
+  members: [GitHubTeamMembership] @connection(keyName: "byTeam", fields: ["id"])
+  repositories: [GitHubTeamRepository]
+    @connection(keyName: "byRepository", fields: ["id"])
+}
+
+type GitHubTeamMembership
+  @model
+  @key(name: "byTeam", fields: ["teamId", "userId", "createdAt"])
+  @key(name: "byUser", fields: ["userId", "teamId", "createdAt"])
+  @aws_api_key {
+  id: ID!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+
+  dateFrom: AWSDateTime!
+  dateTo: AWSDateTime
+
+  userId: ID!
+  user: GitHubUser! @connection(fields: ["userId"])
+  teamId: ID!
+  team: GitHubUser! @connection(fields: ["teamId"])
+}
+
+type GitHubTeamRepository
+  @model
+  @key(name: "byTeam", fields: ["teamId", "repositoryId", "createdAt"])
+  @key(name: "byRepository", fields: ["repositoryId", "teamId", "createdAt"])
+  @aws_api_key {
+  id: ID!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+
+  dateFrom: AWSDateTime!
+  dateTo: AWSDateTime
+
+  permission: String!
+
+  repositoryId: ID!
+  repository: GitHubRepository! @connection(fields: ["repositoryId"])
+  teamId: ID!
+  team: GitHubUser! @connection(fields: ["teamId"])
+}

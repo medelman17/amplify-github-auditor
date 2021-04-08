@@ -48,6 +48,9 @@ export const onCreateGitHubIssue = /* GraphQL */ `
       assignees {
         nextToken
       }
+      labels {
+        nextToken
+      }
     }
   }
 `;
@@ -97,6 +100,9 @@ export const onUpdateGitHubIssue = /* GraphQL */ `
       assignees {
         nextToken
       }
+      labels {
+        nextToken
+      }
     }
   }
 `;
@@ -144,6 +150,9 @@ export const onDeleteGitHubIssue = /* GraphQL */ `
         sshUrl
       }
       assignees {
+        nextToken
+      }
+      labels {
         nextToken
       }
     }
@@ -275,36 +284,165 @@ export const onDeleteIssueAsignee = /* GraphQL */ `
     }
   }
 `;
-export const onCreateTodo = /* GraphQL */ `
-  subscription OnCreateTodo {
-    onCreateTodo {
+export const onCreateGitHubLabel = /* GraphQL */ `
+  subscription OnCreateGitHubLabel {
+    onCreateGitHubLabel {
       id
-      name
-      description
       createdAt
       updatedAt
+      apiUrl
+      name
+      color
+      default
+      issues {
+        nextToken
+      }
     }
   }
 `;
-export const onUpdateTodo = /* GraphQL */ `
-  subscription OnUpdateTodo {
-    onUpdateTodo {
+export const onUpdateGitHubLabel = /* GraphQL */ `
+  subscription OnUpdateGitHubLabel {
+    onUpdateGitHubLabel {
       id
-      name
-      description
       createdAt
       updatedAt
+      apiUrl
+      name
+      color
+      default
+      issues {
+        nextToken
+      }
     }
   }
 `;
-export const onDeleteTodo = /* GraphQL */ `
-  subscription OnDeleteTodo {
-    onDeleteTodo {
+export const onDeleteGitHubLabel = /* GraphQL */ `
+  subscription OnDeleteGitHubLabel {
+    onDeleteGitHubLabel {
       id
-      name
-      description
       createdAt
       updatedAt
+      apiUrl
+      name
+      color
+      default
+      issues {
+        nextToken
+      }
+    }
+  }
+`;
+export const onCreateGitHubLabelIssueConnection = /* GraphQL */ `
+  subscription OnCreateGitHubLabelIssueConnection {
+    onCreateGitHubLabelIssueConnection {
+      id
+      createdAt
+      updatedAt
+      dateFrom
+      dateTo
+      issueId
+      issue {
+        id
+        createdAt
+        updatedAt
+        nodeId
+        apiUrl
+        htmlUrl
+        title
+        number
+        locked
+        state
+        body
+        closedAt
+        authorId
+        repositoryId
+      }
+      labelId
+      label {
+        id
+        createdAt
+        updatedAt
+        apiUrl
+        name
+        color
+        default
+      }
+    }
+  }
+`;
+export const onUpdateGitHubLabelIssueConnection = /* GraphQL */ `
+  subscription OnUpdateGitHubLabelIssueConnection {
+    onUpdateGitHubLabelIssueConnection {
+      id
+      createdAt
+      updatedAt
+      dateFrom
+      dateTo
+      issueId
+      issue {
+        id
+        createdAt
+        updatedAt
+        nodeId
+        apiUrl
+        htmlUrl
+        title
+        number
+        locked
+        state
+        body
+        closedAt
+        authorId
+        repositoryId
+      }
+      labelId
+      label {
+        id
+        createdAt
+        updatedAt
+        apiUrl
+        name
+        color
+        default
+      }
+    }
+  }
+`;
+export const onDeleteGitHubLabelIssueConnection = /* GraphQL */ `
+  subscription OnDeleteGitHubLabelIssueConnection {
+    onDeleteGitHubLabelIssueConnection {
+      id
+      createdAt
+      updatedAt
+      dateFrom
+      dateTo
+      issueId
+      issue {
+        id
+        createdAt
+        updatedAt
+        nodeId
+        apiUrl
+        htmlUrl
+        title
+        number
+        locked
+        state
+        body
+        closedAt
+        authorId
+        repositoryId
+      }
+      labelId
+      label {
+        id
+        createdAt
+        updatedAt
+        apiUrl
+        name
+        color
+        default
+      }
     }
   }
 `;
@@ -319,6 +457,7 @@ export const onCreateGitHubOrganization = /* GraphQL */ `
       apiUrl
       avatar
       email
+      description
     }
   }
 `;
@@ -333,6 +472,7 @@ export const onUpdateGitHubOrganization = /* GraphQL */ `
       apiUrl
       avatar
       email
+      description
     }
   }
 `;
@@ -347,6 +487,7 @@ export const onDeleteGitHubOrganization = /* GraphQL */ `
       apiUrl
       avatar
       email
+      description
     }
   }
 `;
@@ -928,6 +1069,12 @@ export const onCreateGitHubRepository = /* GraphQL */ `
       htmlUrl
       gitUrl
       sshUrl
+      stars {
+        nextToken
+      }
+      teams {
+        nextToken
+      }
       issues {
         nextToken
       }
@@ -954,6 +1101,12 @@ export const onUpdateGitHubRepository = /* GraphQL */ `
       htmlUrl
       gitUrl
       sshUrl
+      stars {
+        nextToken
+      }
+      teams {
+        nextToken
+      }
       issues {
         nextToken
       }
@@ -980,6 +1133,12 @@ export const onDeleteGitHubRepository = /* GraphQL */ `
       htmlUrl
       gitUrl
       sshUrl
+      stars {
+        nextToken
+      }
+      teams {
+        nextToken
+      }
       issues {
         nextToken
       }
@@ -988,6 +1147,429 @@ export const onDeleteGitHubRepository = /* GraphQL */ `
       }
       reviewRequests {
         nextToken
+      }
+    }
+  }
+`;
+export const onCreateGitHubStar = /* GraphQL */ `
+  subscription OnCreateGitHubStar {
+    onCreateGitHubStar {
+      id
+      createdAt
+      updatedAt
+      dateFrom
+      dateTo
+      repositoryId
+      repository {
+        id
+        createdAt
+        updatedAt
+        nodeId
+        name
+        fullName
+        description
+        apiUrl
+        htmlUrl
+        gitUrl
+        sshUrl
+      }
+      userId
+      user {
+        id
+        createdAt
+        updatedAt
+        login
+        nodeId
+        apiUrl
+        htmlUrl
+        avatar
+        name
+        company
+        email
+      }
+    }
+  }
+`;
+export const onUpdateGitHubStar = /* GraphQL */ `
+  subscription OnUpdateGitHubStar {
+    onUpdateGitHubStar {
+      id
+      createdAt
+      updatedAt
+      dateFrom
+      dateTo
+      repositoryId
+      repository {
+        id
+        createdAt
+        updatedAt
+        nodeId
+        name
+        fullName
+        description
+        apiUrl
+        htmlUrl
+        gitUrl
+        sshUrl
+      }
+      userId
+      user {
+        id
+        createdAt
+        updatedAt
+        login
+        nodeId
+        apiUrl
+        htmlUrl
+        avatar
+        name
+        company
+        email
+      }
+    }
+  }
+`;
+export const onDeleteGitHubStar = /* GraphQL */ `
+  subscription OnDeleteGitHubStar {
+    onDeleteGitHubStar {
+      id
+      createdAt
+      updatedAt
+      dateFrom
+      dateTo
+      repositoryId
+      repository {
+        id
+        createdAt
+        updatedAt
+        nodeId
+        name
+        fullName
+        description
+        apiUrl
+        htmlUrl
+        gitUrl
+        sshUrl
+      }
+      userId
+      user {
+        id
+        createdAt
+        updatedAt
+        login
+        nodeId
+        apiUrl
+        htmlUrl
+        avatar
+        name
+        company
+        email
+      }
+    }
+  }
+`;
+export const onCreateGitHubTeam = /* GraphQL */ `
+  subscription OnCreateGitHubTeam {
+    onCreateGitHubTeam {
+      id
+      createdAt
+      updatedAt
+      name
+      nodeId
+      description
+      slug
+      privacy
+      apiUrl
+      htmlUrl
+      membersUrl
+      members {
+        nextToken
+      }
+      repositories {
+        nextToken
+      }
+    }
+  }
+`;
+export const onUpdateGitHubTeam = /* GraphQL */ `
+  subscription OnUpdateGitHubTeam {
+    onUpdateGitHubTeam {
+      id
+      createdAt
+      updatedAt
+      name
+      nodeId
+      description
+      slug
+      privacy
+      apiUrl
+      htmlUrl
+      membersUrl
+      members {
+        nextToken
+      }
+      repositories {
+        nextToken
+      }
+    }
+  }
+`;
+export const onDeleteGitHubTeam = /* GraphQL */ `
+  subscription OnDeleteGitHubTeam {
+    onDeleteGitHubTeam {
+      id
+      createdAt
+      updatedAt
+      name
+      nodeId
+      description
+      slug
+      privacy
+      apiUrl
+      htmlUrl
+      membersUrl
+      members {
+        nextToken
+      }
+      repositories {
+        nextToken
+      }
+    }
+  }
+`;
+export const onCreateGitHubTeamMembership = /* GraphQL */ `
+  subscription OnCreateGitHubTeamMembership {
+    onCreateGitHubTeamMembership {
+      id
+      createdAt
+      updatedAt
+      dateFrom
+      dateTo
+      userId
+      user {
+        id
+        createdAt
+        updatedAt
+        login
+        nodeId
+        apiUrl
+        htmlUrl
+        avatar
+        name
+        company
+        email
+      }
+      teamId
+      team {
+        id
+        createdAt
+        updatedAt
+        login
+        nodeId
+        apiUrl
+        htmlUrl
+        avatar
+        name
+        company
+        email
+      }
+    }
+  }
+`;
+export const onUpdateGitHubTeamMembership = /* GraphQL */ `
+  subscription OnUpdateGitHubTeamMembership {
+    onUpdateGitHubTeamMembership {
+      id
+      createdAt
+      updatedAt
+      dateFrom
+      dateTo
+      userId
+      user {
+        id
+        createdAt
+        updatedAt
+        login
+        nodeId
+        apiUrl
+        htmlUrl
+        avatar
+        name
+        company
+        email
+      }
+      teamId
+      team {
+        id
+        createdAt
+        updatedAt
+        login
+        nodeId
+        apiUrl
+        htmlUrl
+        avatar
+        name
+        company
+        email
+      }
+    }
+  }
+`;
+export const onDeleteGitHubTeamMembership = /* GraphQL */ `
+  subscription OnDeleteGitHubTeamMembership {
+    onDeleteGitHubTeamMembership {
+      id
+      createdAt
+      updatedAt
+      dateFrom
+      dateTo
+      userId
+      user {
+        id
+        createdAt
+        updatedAt
+        login
+        nodeId
+        apiUrl
+        htmlUrl
+        avatar
+        name
+        company
+        email
+      }
+      teamId
+      team {
+        id
+        createdAt
+        updatedAt
+        login
+        nodeId
+        apiUrl
+        htmlUrl
+        avatar
+        name
+        company
+        email
+      }
+    }
+  }
+`;
+export const onCreateGitHubTeamRepository = /* GraphQL */ `
+  subscription OnCreateGitHubTeamRepository {
+    onCreateGitHubTeamRepository {
+      id
+      createdAt
+      updatedAt
+      dateFrom
+      dateTo
+      permission
+      repositoryId
+      repository {
+        id
+        createdAt
+        updatedAt
+        nodeId
+        name
+        fullName
+        description
+        apiUrl
+        htmlUrl
+        gitUrl
+        sshUrl
+      }
+      teamId
+      team {
+        id
+        createdAt
+        updatedAt
+        login
+        nodeId
+        apiUrl
+        htmlUrl
+        avatar
+        name
+        company
+        email
+      }
+    }
+  }
+`;
+export const onUpdateGitHubTeamRepository = /* GraphQL */ `
+  subscription OnUpdateGitHubTeamRepository {
+    onUpdateGitHubTeamRepository {
+      id
+      createdAt
+      updatedAt
+      dateFrom
+      dateTo
+      permission
+      repositoryId
+      repository {
+        id
+        createdAt
+        updatedAt
+        nodeId
+        name
+        fullName
+        description
+        apiUrl
+        htmlUrl
+        gitUrl
+        sshUrl
+      }
+      teamId
+      team {
+        id
+        createdAt
+        updatedAt
+        login
+        nodeId
+        apiUrl
+        htmlUrl
+        avatar
+        name
+        company
+        email
+      }
+    }
+  }
+`;
+export const onDeleteGitHubTeamRepository = /* GraphQL */ `
+  subscription OnDeleteGitHubTeamRepository {
+    onDeleteGitHubTeamRepository {
+      id
+      createdAt
+      updatedAt
+      dateFrom
+      dateTo
+      permission
+      repositoryId
+      repository {
+        id
+        createdAt
+        updatedAt
+        nodeId
+        name
+        fullName
+        description
+        apiUrl
+        htmlUrl
+        gitUrl
+        sshUrl
+      }
+      teamId
+      team {
+        id
+        createdAt
+        updatedAt
+        login
+        nodeId
+        apiUrl
+        htmlUrl
+        avatar
+        name
+        company
+        email
       }
     }
   }
@@ -1006,6 +1588,9 @@ export const onCreateGitHubUser = /* GraphQL */ `
       name
       company
       email
+      teams {
+        nextToken
+      }
       issuesAuthored {
         nextToken
       }
@@ -1041,6 +1626,9 @@ export const onUpdateGitHubUser = /* GraphQL */ `
       name
       company
       email
+      teams {
+        nextToken
+      }
       issuesAuthored {
         nextToken
       }
@@ -1076,6 +1664,9 @@ export const onDeleteGitHubUser = /* GraphQL */ `
       name
       company
       email
+      teams {
+        nextToken
+      }
       issuesAuthored {
         nextToken
       }
@@ -1094,6 +1685,36 @@ export const onDeleteGitHubUser = /* GraphQL */ `
       reviewRequestsAssigned {
         nextToken
       }
+    }
+  }
+`;
+export const onCreateUser = /* GraphQL */ `
+  subscription OnCreateUser {
+    onCreateUser {
+      id
+      createdAt
+      updatedAt
+      login
+    }
+  }
+`;
+export const onUpdateUser = /* GraphQL */ `
+  subscription OnUpdateUser {
+    onUpdateUser {
+      id
+      createdAt
+      updatedAt
+      login
+    }
+  }
+`;
+export const onDeleteUser = /* GraphQL */ `
+  subscription OnDeleteUser {
+    onDeleteUser {
+      id
+      createdAt
+      updatedAt
+      login
     }
   }
 `;

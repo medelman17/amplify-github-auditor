@@ -51,6 +51,9 @@ export const createGitHubIssue = /* GraphQL */ `
       assignees {
         nextToken
       }
+      labels {
+        nextToken
+      }
     }
   }
 `;
@@ -103,6 +106,9 @@ export const updateGitHubIssue = /* GraphQL */ `
       assignees {
         nextToken
       }
+      labels {
+        nextToken
+      }
     }
   }
 `;
@@ -153,6 +159,9 @@ export const deleteGitHubIssue = /* GraphQL */ `
         sshUrl
       }
       assignees {
+        nextToken
+      }
+      labels {
         nextToken
       }
     }
@@ -293,45 +302,183 @@ export const deleteIssueAsignee = /* GraphQL */ `
     }
   }
 `;
-export const createTodo = /* GraphQL */ `
-  mutation CreateTodo(
-    $input: CreateTodoInput!
-    $condition: ModelTodoConditionInput
+export const createGitHubLabel = /* GraphQL */ `
+  mutation CreateGitHubLabel(
+    $input: CreateGitHubLabelInput!
+    $condition: ModelGitHubLabelConditionInput
   ) {
-    createTodo(input: $input, condition: $condition) {
+    createGitHubLabel(input: $input, condition: $condition) {
       id
-      name
-      description
       createdAt
       updatedAt
+      apiUrl
+      name
+      color
+      default
+      issues {
+        nextToken
+      }
     }
   }
 `;
-export const updateTodo = /* GraphQL */ `
-  mutation UpdateTodo(
-    $input: UpdateTodoInput!
-    $condition: ModelTodoConditionInput
+export const updateGitHubLabel = /* GraphQL */ `
+  mutation UpdateGitHubLabel(
+    $input: UpdateGitHubLabelInput!
+    $condition: ModelGitHubLabelConditionInput
   ) {
-    updateTodo(input: $input, condition: $condition) {
+    updateGitHubLabel(input: $input, condition: $condition) {
       id
-      name
-      description
       createdAt
       updatedAt
+      apiUrl
+      name
+      color
+      default
+      issues {
+        nextToken
+      }
     }
   }
 `;
-export const deleteTodo = /* GraphQL */ `
-  mutation DeleteTodo(
-    $input: DeleteTodoInput!
-    $condition: ModelTodoConditionInput
+export const deleteGitHubLabel = /* GraphQL */ `
+  mutation DeleteGitHubLabel(
+    $input: DeleteGitHubLabelInput!
+    $condition: ModelGitHubLabelConditionInput
   ) {
-    deleteTodo(input: $input, condition: $condition) {
+    deleteGitHubLabel(input: $input, condition: $condition) {
       id
-      name
-      description
       createdAt
       updatedAt
+      apiUrl
+      name
+      color
+      default
+      issues {
+        nextToken
+      }
+    }
+  }
+`;
+export const createGitHubLabelIssueConnection = /* GraphQL */ `
+  mutation CreateGitHubLabelIssueConnection(
+    $input: CreateGitHubLabelIssueConnectionInput!
+    $condition: ModelGitHubLabelIssueConnectionConditionInput
+  ) {
+    createGitHubLabelIssueConnection(input: $input, condition: $condition) {
+      id
+      createdAt
+      updatedAt
+      dateFrom
+      dateTo
+      issueId
+      issue {
+        id
+        createdAt
+        updatedAt
+        nodeId
+        apiUrl
+        htmlUrl
+        title
+        number
+        locked
+        state
+        body
+        closedAt
+        authorId
+        repositoryId
+      }
+      labelId
+      label {
+        id
+        createdAt
+        updatedAt
+        apiUrl
+        name
+        color
+        default
+      }
+    }
+  }
+`;
+export const updateGitHubLabelIssueConnection = /* GraphQL */ `
+  mutation UpdateGitHubLabelIssueConnection(
+    $input: UpdateGitHubLabelIssueConnectionInput!
+    $condition: ModelGitHubLabelIssueConnectionConditionInput
+  ) {
+    updateGitHubLabelIssueConnection(input: $input, condition: $condition) {
+      id
+      createdAt
+      updatedAt
+      dateFrom
+      dateTo
+      issueId
+      issue {
+        id
+        createdAt
+        updatedAt
+        nodeId
+        apiUrl
+        htmlUrl
+        title
+        number
+        locked
+        state
+        body
+        closedAt
+        authorId
+        repositoryId
+      }
+      labelId
+      label {
+        id
+        createdAt
+        updatedAt
+        apiUrl
+        name
+        color
+        default
+      }
+    }
+  }
+`;
+export const deleteGitHubLabelIssueConnection = /* GraphQL */ `
+  mutation DeleteGitHubLabelIssueConnection(
+    $input: DeleteGitHubLabelIssueConnectionInput!
+    $condition: ModelGitHubLabelIssueConnectionConditionInput
+  ) {
+    deleteGitHubLabelIssueConnection(input: $input, condition: $condition) {
+      id
+      createdAt
+      updatedAt
+      dateFrom
+      dateTo
+      issueId
+      issue {
+        id
+        createdAt
+        updatedAt
+        nodeId
+        apiUrl
+        htmlUrl
+        title
+        number
+        locked
+        state
+        body
+        closedAt
+        authorId
+        repositoryId
+      }
+      labelId
+      label {
+        id
+        createdAt
+        updatedAt
+        apiUrl
+        name
+        color
+        default
+      }
     }
   }
 `;
@@ -349,6 +496,7 @@ export const createGitHubOrganization = /* GraphQL */ `
       apiUrl
       avatar
       email
+      description
     }
   }
 `;
@@ -366,6 +514,7 @@ export const updateGitHubOrganization = /* GraphQL */ `
       apiUrl
       avatar
       email
+      description
     }
   }
 `;
@@ -383,6 +532,7 @@ export const deleteGitHubOrganization = /* GraphQL */ `
       apiUrl
       avatar
       email
+      description
     }
   }
 `;
@@ -1003,6 +1153,12 @@ export const createGitHubRepository = /* GraphQL */ `
       htmlUrl
       gitUrl
       sshUrl
+      stars {
+        nextToken
+      }
+      teams {
+        nextToken
+      }
       issues {
         nextToken
       }
@@ -1032,6 +1188,12 @@ export const updateGitHubRepository = /* GraphQL */ `
       htmlUrl
       gitUrl
       sshUrl
+      stars {
+        nextToken
+      }
+      teams {
+        nextToken
+      }
       issues {
         nextToken
       }
@@ -1061,6 +1223,12 @@ export const deleteGitHubRepository = /* GraphQL */ `
       htmlUrl
       gitUrl
       sshUrl
+      stars {
+        nextToken
+      }
+      teams {
+        nextToken
+      }
       issues {
         nextToken
       }
@@ -1069,6 +1237,465 @@ export const deleteGitHubRepository = /* GraphQL */ `
       }
       reviewRequests {
         nextToken
+      }
+    }
+  }
+`;
+export const createGitHubStar = /* GraphQL */ `
+  mutation CreateGitHubStar(
+    $input: CreateGitHubStarInput!
+    $condition: ModelGitHubStarConditionInput
+  ) {
+    createGitHubStar(input: $input, condition: $condition) {
+      id
+      createdAt
+      updatedAt
+      dateFrom
+      dateTo
+      repositoryId
+      repository {
+        id
+        createdAt
+        updatedAt
+        nodeId
+        name
+        fullName
+        description
+        apiUrl
+        htmlUrl
+        gitUrl
+        sshUrl
+      }
+      userId
+      user {
+        id
+        createdAt
+        updatedAt
+        login
+        nodeId
+        apiUrl
+        htmlUrl
+        avatar
+        name
+        company
+        email
+      }
+    }
+  }
+`;
+export const updateGitHubStar = /* GraphQL */ `
+  mutation UpdateGitHubStar(
+    $input: UpdateGitHubStarInput!
+    $condition: ModelGitHubStarConditionInput
+  ) {
+    updateGitHubStar(input: $input, condition: $condition) {
+      id
+      createdAt
+      updatedAt
+      dateFrom
+      dateTo
+      repositoryId
+      repository {
+        id
+        createdAt
+        updatedAt
+        nodeId
+        name
+        fullName
+        description
+        apiUrl
+        htmlUrl
+        gitUrl
+        sshUrl
+      }
+      userId
+      user {
+        id
+        createdAt
+        updatedAt
+        login
+        nodeId
+        apiUrl
+        htmlUrl
+        avatar
+        name
+        company
+        email
+      }
+    }
+  }
+`;
+export const deleteGitHubStar = /* GraphQL */ `
+  mutation DeleteGitHubStar(
+    $input: DeleteGitHubStarInput!
+    $condition: ModelGitHubStarConditionInput
+  ) {
+    deleteGitHubStar(input: $input, condition: $condition) {
+      id
+      createdAt
+      updatedAt
+      dateFrom
+      dateTo
+      repositoryId
+      repository {
+        id
+        createdAt
+        updatedAt
+        nodeId
+        name
+        fullName
+        description
+        apiUrl
+        htmlUrl
+        gitUrl
+        sshUrl
+      }
+      userId
+      user {
+        id
+        createdAt
+        updatedAt
+        login
+        nodeId
+        apiUrl
+        htmlUrl
+        avatar
+        name
+        company
+        email
+      }
+    }
+  }
+`;
+export const createGitHubTeam = /* GraphQL */ `
+  mutation CreateGitHubTeam(
+    $input: CreateGitHubTeamInput!
+    $condition: ModelGitHubTeamConditionInput
+  ) {
+    createGitHubTeam(input: $input, condition: $condition) {
+      id
+      createdAt
+      updatedAt
+      name
+      nodeId
+      description
+      slug
+      privacy
+      apiUrl
+      htmlUrl
+      membersUrl
+      members {
+        nextToken
+      }
+      repositories {
+        nextToken
+      }
+    }
+  }
+`;
+export const updateGitHubTeam = /* GraphQL */ `
+  mutation UpdateGitHubTeam(
+    $input: UpdateGitHubTeamInput!
+    $condition: ModelGitHubTeamConditionInput
+  ) {
+    updateGitHubTeam(input: $input, condition: $condition) {
+      id
+      createdAt
+      updatedAt
+      name
+      nodeId
+      description
+      slug
+      privacy
+      apiUrl
+      htmlUrl
+      membersUrl
+      members {
+        nextToken
+      }
+      repositories {
+        nextToken
+      }
+    }
+  }
+`;
+export const deleteGitHubTeam = /* GraphQL */ `
+  mutation DeleteGitHubTeam(
+    $input: DeleteGitHubTeamInput!
+    $condition: ModelGitHubTeamConditionInput
+  ) {
+    deleteGitHubTeam(input: $input, condition: $condition) {
+      id
+      createdAt
+      updatedAt
+      name
+      nodeId
+      description
+      slug
+      privacy
+      apiUrl
+      htmlUrl
+      membersUrl
+      members {
+        nextToken
+      }
+      repositories {
+        nextToken
+      }
+    }
+  }
+`;
+export const createGitHubTeamMembership = /* GraphQL */ `
+  mutation CreateGitHubTeamMembership(
+    $input: CreateGitHubTeamMembershipInput!
+    $condition: ModelGitHubTeamMembershipConditionInput
+  ) {
+    createGitHubTeamMembership(input: $input, condition: $condition) {
+      id
+      createdAt
+      updatedAt
+      dateFrom
+      dateTo
+      userId
+      user {
+        id
+        createdAt
+        updatedAt
+        login
+        nodeId
+        apiUrl
+        htmlUrl
+        avatar
+        name
+        company
+        email
+      }
+      teamId
+      team {
+        id
+        createdAt
+        updatedAt
+        login
+        nodeId
+        apiUrl
+        htmlUrl
+        avatar
+        name
+        company
+        email
+      }
+    }
+  }
+`;
+export const updateGitHubTeamMembership = /* GraphQL */ `
+  mutation UpdateGitHubTeamMembership(
+    $input: UpdateGitHubTeamMembershipInput!
+    $condition: ModelGitHubTeamMembershipConditionInput
+  ) {
+    updateGitHubTeamMembership(input: $input, condition: $condition) {
+      id
+      createdAt
+      updatedAt
+      dateFrom
+      dateTo
+      userId
+      user {
+        id
+        createdAt
+        updatedAt
+        login
+        nodeId
+        apiUrl
+        htmlUrl
+        avatar
+        name
+        company
+        email
+      }
+      teamId
+      team {
+        id
+        createdAt
+        updatedAt
+        login
+        nodeId
+        apiUrl
+        htmlUrl
+        avatar
+        name
+        company
+        email
+      }
+    }
+  }
+`;
+export const deleteGitHubTeamMembership = /* GraphQL */ `
+  mutation DeleteGitHubTeamMembership(
+    $input: DeleteGitHubTeamMembershipInput!
+    $condition: ModelGitHubTeamMembershipConditionInput
+  ) {
+    deleteGitHubTeamMembership(input: $input, condition: $condition) {
+      id
+      createdAt
+      updatedAt
+      dateFrom
+      dateTo
+      userId
+      user {
+        id
+        createdAt
+        updatedAt
+        login
+        nodeId
+        apiUrl
+        htmlUrl
+        avatar
+        name
+        company
+        email
+      }
+      teamId
+      team {
+        id
+        createdAt
+        updatedAt
+        login
+        nodeId
+        apiUrl
+        htmlUrl
+        avatar
+        name
+        company
+        email
+      }
+    }
+  }
+`;
+export const createGitHubTeamRepository = /* GraphQL */ `
+  mutation CreateGitHubTeamRepository(
+    $input: CreateGitHubTeamRepositoryInput!
+    $condition: ModelGitHubTeamRepositoryConditionInput
+  ) {
+    createGitHubTeamRepository(input: $input, condition: $condition) {
+      id
+      createdAt
+      updatedAt
+      dateFrom
+      dateTo
+      permission
+      repositoryId
+      repository {
+        id
+        createdAt
+        updatedAt
+        nodeId
+        name
+        fullName
+        description
+        apiUrl
+        htmlUrl
+        gitUrl
+        sshUrl
+      }
+      teamId
+      team {
+        id
+        createdAt
+        updatedAt
+        login
+        nodeId
+        apiUrl
+        htmlUrl
+        avatar
+        name
+        company
+        email
+      }
+    }
+  }
+`;
+export const updateGitHubTeamRepository = /* GraphQL */ `
+  mutation UpdateGitHubTeamRepository(
+    $input: UpdateGitHubTeamRepositoryInput!
+    $condition: ModelGitHubTeamRepositoryConditionInput
+  ) {
+    updateGitHubTeamRepository(input: $input, condition: $condition) {
+      id
+      createdAt
+      updatedAt
+      dateFrom
+      dateTo
+      permission
+      repositoryId
+      repository {
+        id
+        createdAt
+        updatedAt
+        nodeId
+        name
+        fullName
+        description
+        apiUrl
+        htmlUrl
+        gitUrl
+        sshUrl
+      }
+      teamId
+      team {
+        id
+        createdAt
+        updatedAt
+        login
+        nodeId
+        apiUrl
+        htmlUrl
+        avatar
+        name
+        company
+        email
+      }
+    }
+  }
+`;
+export const deleteGitHubTeamRepository = /* GraphQL */ `
+  mutation DeleteGitHubTeamRepository(
+    $input: DeleteGitHubTeamRepositoryInput!
+    $condition: ModelGitHubTeamRepositoryConditionInput
+  ) {
+    deleteGitHubTeamRepository(input: $input, condition: $condition) {
+      id
+      createdAt
+      updatedAt
+      dateFrom
+      dateTo
+      permission
+      repositoryId
+      repository {
+        id
+        createdAt
+        updatedAt
+        nodeId
+        name
+        fullName
+        description
+        apiUrl
+        htmlUrl
+        gitUrl
+        sshUrl
+      }
+      teamId
+      team {
+        id
+        createdAt
+        updatedAt
+        login
+        nodeId
+        apiUrl
+        htmlUrl
+        avatar
+        name
+        company
+        email
       }
     }
   }
@@ -1090,6 +1717,9 @@ export const createGitHubUser = /* GraphQL */ `
       name
       company
       email
+      teams {
+        nextToken
+      }
       issuesAuthored {
         nextToken
       }
@@ -1128,6 +1758,9 @@ export const updateGitHubUser = /* GraphQL */ `
       name
       company
       email
+      teams {
+        nextToken
+      }
       issuesAuthored {
         nextToken
       }
@@ -1166,6 +1799,9 @@ export const deleteGitHubUser = /* GraphQL */ `
       name
       company
       email
+      teams {
+        nextToken
+      }
       issuesAuthored {
         nextToken
       }
@@ -1184,6 +1820,45 @@ export const deleteGitHubUser = /* GraphQL */ `
       reviewRequestsAssigned {
         nextToken
       }
+    }
+  }
+`;
+export const createUser = /* GraphQL */ `
+  mutation CreateUser(
+    $input: CreateUserInput!
+    $condition: ModelUserConditionInput
+  ) {
+    createUser(input: $input, condition: $condition) {
+      id
+      createdAt
+      updatedAt
+      login
+    }
+  }
+`;
+export const updateUser = /* GraphQL */ `
+  mutation UpdateUser(
+    $input: UpdateUserInput!
+    $condition: ModelUserConditionInput
+  ) {
+    updateUser(input: $input, condition: $condition) {
+      id
+      createdAt
+      updatedAt
+      login
+    }
+  }
+`;
+export const deleteUser = /* GraphQL */ `
+  mutation DeleteUser(
+    $input: DeleteUserInput!
+    $condition: ModelUserConditionInput
+  ) {
+    deleteUser(input: $input, condition: $condition) {
+      id
+      createdAt
+      updatedAt
+      login
     }
   }
 `;

@@ -5,4 +5,5 @@ export const teamEventHandler: HandlerFunction<"team", unknown> = async ({
   payload,
 }) => {
   const sender = await Models.User.fromEvent(payload.sender);
+  const { team } = payload;
 };

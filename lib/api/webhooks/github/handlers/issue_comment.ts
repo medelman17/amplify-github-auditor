@@ -4,7 +4,7 @@ import * as Models from "../models";
 export const issueCommentEventHandler: HandlerFunction<
   "issue_comment",
   unknown
-> = ({ payload }) => {
-  const sender = new Models.User(payload.sender);
+> = async ({ payload }) => {
+  const sender = await new Models.User(payload.sender);
   console.log("sender", sender);
 };

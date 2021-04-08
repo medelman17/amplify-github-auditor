@@ -19,7 +19,11 @@ export class User {
   user: GitHubUser | null;
 
   constructor(protected _user: EventUser) {
-    this.init();
+    //@ts-ignore
+    return (async () => {
+      await this.init();
+      return this;
+    })();
   }
 
   private async init() {
@@ -29,6 +33,7 @@ export class User {
       this.user = await this.createUser();
     }
     console.log(`User initialized: ${this.user.login}`);
+    return this;
   }
 
   protected async getUser() {

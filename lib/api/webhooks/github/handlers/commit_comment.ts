@@ -4,6 +4,6 @@ import * as Models from "../models";
 export const commitCommentEventHandler: HandlerFunction<
   "commit_comment",
   unknown
-> = ({ payload }) => {
-  const sender = new Models.User(payload.sender);
+> = async ({ payload }) => {
+  const sender = await new Models.User(payload.sender).init();
 };

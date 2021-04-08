@@ -4,6 +4,6 @@ import * as Models from "../models";
 export const prReviewRequestEventHandler: HandlerFunction<
   "pull_request_review",
   unknown
-> = ({ payload }) => {
-  const sender = new Models.User(payload.sender);
+> = async ({ payload }) => {
+  const sender = await new Models.User(payload.sender).init();
 };

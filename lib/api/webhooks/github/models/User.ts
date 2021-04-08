@@ -18,15 +18,9 @@ import {
 export class User {
   user: GitHubUser | null;
 
-  constructor(protected _user: EventUser) {
-    //@ts-ignore
-    return (async () => {
-      await this.init();
-      return this;
-    })();
-  }
+  constructor(protected _user: EventUser) {}
 
-  private async init() {
+  async init() {
     this.user = await this.getUser();
     if (this.user === null) {
       console.log(`User doesn't exist; creating new user: ${this._user.login}`);

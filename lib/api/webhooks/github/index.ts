@@ -5,6 +5,10 @@ const GITHUB_SECRET = "2jWWv53mI1FFjNwBJQN9avcZf6Vzneo1TsWNtOA1";
 
 const webhook = new Webhooks({ secret: GITHUB_SECRET });
 
+webhook.onAny(({ id, name, payload }) => {
+  console.log("Event", name, JSON.stringify(payload, null, 2));
+});
+
 webhook.on("issues", Handlers.issueEventHandler);
 webhook.on("pull_request", Handlers.prEventHandler);
 webhook.on("repository", Handlers.repositoryEventHandler);

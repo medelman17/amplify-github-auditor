@@ -6,4 +6,5 @@ export const issueCommentEventHandler: HandlerFunction<
   unknown
 > = ({ payload }) => {
   const sender = new Models.User(payload.sender);
+  console.log("sender", sender);
 };

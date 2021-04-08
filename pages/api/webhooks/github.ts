@@ -8,5 +8,4 @@ const cors = Cors();
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   await runMiddleware(req, res, webhookMiddleware);
   await runMiddleware(req, res, cors);
-  res.json({ msg: "OK" });
 };

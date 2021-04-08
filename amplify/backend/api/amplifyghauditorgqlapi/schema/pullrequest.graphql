@@ -1,0 +1,114 @@
+type GitHubPullRequest @model @aws_api_key {
+  id: ID!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+  closedAt: AWSDateTime
+  mergedAt: AWSDateTime
+  apiUrl: AWSURL!
+  htmlUrl: AWSURL!
+  title: String!
+  number: Int!
+  locked: Boolean!
+
+  body: String!
+
+  authorId: ID!
+  author: GitHubUser! @connection(fields: ["authorId"])
+  repositoryId: ID!
+  repository: GitHubRepository! @connection(fields: ["repositoryId"])
+
+  assignees: [PullRequestAsignee]
+    @connection(keyName: "byPullRequest", fields: ["id"])
+
+  reviews: [PullRequestReview] @connection(fields: ["id"])
+  reviewsRequested: [PullRequestReviewRequest]
+    @connection(keyName: "byPullRequest", fields: ["id"])
+  reviewComments: [PullRequestReviewComment]
+    @connection(keyName: "byPullRequest", fields: ["id"])
+}
+
+enum GitHubPullRequestState {
+  OPEN
+  CLOSED
+  MERGED
+}
+
+type PullRequestAsignee
+  @model(queries: null)
+  @key(name: "byPullRequest", fields: ["pullRequestId", "userId", "createdAt"])
+  @key(name: "byUser", fields: ["userId", "pullRequestId", "createdAt"])
+  @aws_api_key {
+  id: ID!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+
+  dateFrom: AWSDateTime!
+  dateTo: AWSDateTime
+
+  pullRequestId: ID!
+  userId: ID!
+
+  pullRequest: GitHubPullRequest! @connection(fields: ["pullRequestId"])
+  user: GitHubUser! @connection(fields: ["userId"])
+}
+
+type PullRequestReview @model @aws_api_key {
+  id: ID!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+
+  body: String
+  commitId: String
+  submittedAt: AWSDateTime
+
+  state: PullRequestReviewState!
+
+  requestId: ID!
+  request: PullRequestReviewRequest! @connection(fields: ["requestId"])
+
+  comments: [PullRequestReviewComment]
+    @connection(keyName: "byPullRequestReview", fields: ["id"])
+}
+
+enum PullRequestReviewState {
+  DISMISSED
+  SUBMITTED
+  COMMENTED
+}
+
+type PullRequestReviewComment
+  @model
+  @key(
+    name: "byPullRequestReview"
+    fields: ["pullRequestReviewId", "createdAt"]
+  )
+  @key(name: "byPullRequest", fields: ["pullRequestId", "createdAt"])
+  @aws_api_key {
+  id: ID!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+  nodeId: String!
+  path: String!
+
+  diffHunk: String
+  body: String!
+
+  position: Int!
+  originalPosition: Int!
+
+  apiUrl: AWSURL!
+  htmlUrl: AWSURL!
+
+  commitId: String!
+  originalCommitId: String!
+
+  authorId: ID!
+  author: GitHubUser! @connection(fields: ["authorId"])
+
+  pullRequestReviewId: ID!
+  pullRequestReview: PullRequestReview!
+    @connection(fields: ["pullRequestReviewId"])
+
+  pullRequestId: ID!
+  pullRequest: GitHubPullRequest! @connection(fields: ["pullRequestId"])
+}

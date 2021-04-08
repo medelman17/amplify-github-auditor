@@ -5,5 +5,5 @@ export const issueCommentEventHandler: HandlerFunction<
   "issue_comment",
   unknown
 > = async ({ payload }) => {
-  const sender = await new Models.User(payload.sender).init();
+  const sender = await Models.User.fromEvent(payload.sender);
 };

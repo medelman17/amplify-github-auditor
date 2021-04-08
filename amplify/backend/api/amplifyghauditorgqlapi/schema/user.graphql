@@ -10,4 +10,54 @@ type GitHubUser @model @key(fields: ["id", "login"]) @aws_api_key {
   name: String
   company: String
   email: AWSEmail
+
+  issuesAuthored: [GitHubIssue] @connection(fields: ["id"])
+  issuesAssigned: [IssueAsignee] @connection(keyName: "byUser", fields: ["id"])
+
+  pullRequestsAuthored: [GitHubPullRequest] @connection(fields: ["id"])
+  pullRequestsAssigned: [PullRequestAsignee]
+    @connection(keyName: "byUser", fields: ["id"])
+
+  reviewRequestsAuthored: [PullRequestReviewRequest]
+    @connection(keyName: "byRequester", fields: ["id"])
+  reviewRequestsAssigned: [PullRequestReviewRequest]
+    @connection(keyName: "byReviewer", fields: ["id"])
+}
+
+type PullRequestReviewRequest
+  @model
+  @key(name: "byReviewer", fields: ["reviewerId", "state", "createdAt"])
+  @key(name: "byRequester", fields: ["requesterId", "state", "createdAt"])
+  @key(name: "byPullRequest", fields: ["pullRequestId", "state", "createdAt"])
+  @key(name: "byRepository", fields: ["repositoryId", "state", "createdAt"])
+  @aws_api_key {
+  id: ID!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+
+  dateFrom: AWSDateTime!
+  dateTo: AWSDateTime
+
+  state: PullRequestReviewRequestState!
+
+  repositoryId: ID!
+  repository: GitHubRepository! @connection(fields: ["repositoryId"])
+
+  pullRequestId: ID!
+  pullRequest: GitHubPullRequest! @connection(fields: ["pullRequestId"])
+
+  reviewerId: ID!
+  reviewer: GitHubUser! @connection(fields: ["reviewerId"])
+
+  requesterId: ID!
+  requester: GitHubUser! @connection(fields: ["requesterId"])
+
+  reviewId: ID!
+  review: PullRequestReview! @connection(fields: ["reviewId"])
+}
+
+enum PullRequestReviewRequestState {
+  PENDING
+  IN_PROGRESS
+  COMPLETE
 }

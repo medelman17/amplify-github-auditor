@@ -5,6 +5,15 @@ type GitHubRepository @model {
   nodeId: String!
   name: String!
   fullName: String!
+  description: String
+
+  apiUrl: AWSURL!
   htmlUrl: AWSURL!
-  description: String!
+  gitUrl: AWSURL!
+  sshUrl: AWSURL!
+
+  issues: [GitHubIssue] @connection(fields: ["id"])
+  pullRequests: [GitHubPullRequest] @connection(fields: ["id"])
+  reviewRequests: [PullRequestReviewRequest]
+    @connection(keyName: "byRepository", fields: ["id"])
 }

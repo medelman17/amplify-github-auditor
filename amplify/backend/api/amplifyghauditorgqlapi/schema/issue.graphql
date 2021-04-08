@@ -1,0 +1,46 @@
+type GitHubIssue @model @aws_api_key {
+  id: ID!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+  nodeId: String!
+  apiUrl: AWSURL!
+  htmlUrl: AWSURL!
+  title: String!
+  number: Int!
+  locked: Boolean!
+  state: GitHubIssueState!
+  body: String!
+
+  closedAt: AWSDateTime
+
+  authorId: ID!
+  author: GitHubUser! @connection(fields: ["authorId"])
+  repositoryId: ID!
+  repository: GitHubRepository! @connection(fields: ["repositoryId"])
+
+  assignees: [IssueAsignee] @connection(keyName: "byIssue", fields: ["id"])
+}
+
+enum GitHubIssueState {
+  OPEN
+  CLOSED
+}
+
+type IssueAsignee
+  @model(queries: null)
+  @key(name: "byIssue", fields: ["issueId", "userId", "createdAt"])
+  @key(name: "byUser", fields: ["userId", "issueId", "createdAt"])
+  @aws_api_key {
+  id: ID!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+
+  dateFrom: AWSDateTime!
+  dateTo: AWSDateTime
+
+  issueId: ID!
+  userId: ID!
+
+  pullRequest: GitHubIssue! @connection(fields: ["issueId"])
+  user: GitHubUser! @connection(fields: ["userId"])
+}

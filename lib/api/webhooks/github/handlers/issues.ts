@@ -4,5 +4,14 @@ import * as Models from "../models";
 export const issueEventHandler: HandlerFunction<"issues", unknown> = async ({
   payload,
 }) => {
-  const sender = await new Models.User(payload.sender).init();
+  const sender = await Models.User.fromEvent(payload.sender);
+
+  const issue = await Models.Issue.fromEvent(payload.issue);
+  const repository = await Models.Repository.fromEvent(payload.repository);
+  await issue.attach(repository);
+
+  for (const assignee of payload.issue.assignees) {
+    const user = await Models.User.fromEvent(assignee);
+    await issue.assign(user);
+  }
 };

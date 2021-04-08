@@ -14,6 +14,7 @@ type GitHubPullRequest @model @aws_api_key {
 
   authorId: ID!
   author: GitHubUser! @connection(fields: ["authorId"])
+
   repositoryId: ID!
   repository: GitHubRepository! @connection(fields: ["repositoryId"])
 

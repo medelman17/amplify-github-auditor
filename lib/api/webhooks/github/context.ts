@@ -2,6 +2,7 @@ import Amplify, { API, graphqlOperation } from "aws-amplify";
 import * as queries from "@/graphql/queries";
 import * as mutations from "@/graphql/mutations";
 export type { GraphQLResult } from "@aws-amplify/api";
+import * as Sentry from "@sentry/node";
 
 const apiconfig = {
   aws_appsync_graphqlEndpoint:
@@ -12,5 +13,13 @@ const apiconfig = {
 };
 
 API.configure(apiconfig);
+
+export function createTransaction(name: string) {
+  const tx = Sentry.startTransaction({ name });
+  Sentry.configureScope((scope) => {
+    scope.setSpan(tx);
+  });
+  return tx;
+}
 
 export { API, graphqlOperation, queries, mutations };

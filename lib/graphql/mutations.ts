@@ -311,6 +311,8 @@ export const createGitHubLabel = /* GraphQL */ `
       id
       createdAt
       updatedAt
+      nodeId
+      description
       apiUrl
       name
       color
@@ -330,6 +332,8 @@ export const updateGitHubLabel = /* GraphQL */ `
       id
       createdAt
       updatedAt
+      nodeId
+      description
       apiUrl
       name
       color
@@ -349,6 +353,8 @@ export const deleteGitHubLabel = /* GraphQL */ `
       id
       createdAt
       updatedAt
+      nodeId
+      description
       apiUrl
       name
       color
@@ -392,6 +398,8 @@ export const createGitHubLabelIssueConnection = /* GraphQL */ `
         id
         createdAt
         updatedAt
+        nodeId
+        description
         apiUrl
         name
         color
@@ -433,6 +441,8 @@ export const updateGitHubLabelIssueConnection = /* GraphQL */ `
         id
         createdAt
         updatedAt
+        nodeId
+        description
         apiUrl
         name
         color
@@ -474,6 +484,8 @@ export const deleteGitHubLabelIssueConnection = /* GraphQL */ `
         id
         createdAt
         updatedAt
+        nodeId
+        description
         apiUrl
         name
         color

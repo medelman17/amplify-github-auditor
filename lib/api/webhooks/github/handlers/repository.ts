@@ -5,5 +5,5 @@ export const repositoryEventHandler: HandlerFunction<
   "repository",
   unknown
 > = async ({ payload }) => {
-  const sender = await Models.User.fromEvent(payload.sender);
+  // const sender = await Models.User.fromEvent(payload.sender);
 };

@@ -290,6 +290,8 @@ export const onCreateGitHubLabel = /* GraphQL */ `
       id
       createdAt
       updatedAt
+      nodeId
+      description
       apiUrl
       name
       color
@@ -306,6 +308,8 @@ export const onUpdateGitHubLabel = /* GraphQL */ `
       id
       createdAt
       updatedAt
+      nodeId
+      description
       apiUrl
       name
       color
@@ -322,6 +326,8 @@ export const onDeleteGitHubLabel = /* GraphQL */ `
       id
       createdAt
       updatedAt
+      nodeId
+      description
       apiUrl
       name
       color
@@ -362,6 +368,8 @@ export const onCreateGitHubLabelIssueConnection = /* GraphQL */ `
         id
         createdAt
         updatedAt
+        nodeId
+        description
         apiUrl
         name
         color
@@ -400,6 +408,8 @@ export const onUpdateGitHubLabelIssueConnection = /* GraphQL */ `
         id
         createdAt
         updatedAt
+        nodeId
+        description
         apiUrl
         name
         color
@@ -438,6 +448,8 @@ export const onDeleteGitHubLabelIssueConnection = /* GraphQL */ `
         id
         createdAt
         updatedAt
+        nodeId
+        description
         apiUrl
         name
         color

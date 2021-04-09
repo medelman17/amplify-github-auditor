@@ -1,7 +1,13 @@
 import {
   Issue as EventIssue,
   IssuesEvent,
+  Repository as EventRepository,
+  Organization as EventOrganization,
 } from "@octokit/webhooks-definitions/schema";
+import {
+  EmitterWebhookEvent,
+  HandlerFunction,
+} from "@octokit/webhooks/dist-types/types";
 import {
   API,
   graphqlOperation,
@@ -23,8 +29,16 @@ import {
   CreateIssueAsigneeMutation,
   UpdateIssueAsigneeInput,
   UpdateIssueAsigneeMutation,
+  GitHubLabelIssueConnection,
+  GetGitHubLabelIssueConnectionQuery,
+  CreateGitHubLabelIssueConnectionMutation,
+  CreateGitHubLabelIssueConnectionInput,
 } from "../../../../amplify/API";
 import { User } from "./User";
+import { Label } from "./Label";
+import { Octokit } from "@octokit/core";
+
+const octokit = new Octokit({ auth: process.env.GITHUB_ACCESS_TOKEN });
 
 async function getGitHubIssueFromWebhookEvent(e: EventIssue) {
   const vars: GetGitHubIssueQueryVariables = { id: e.id.toString() };
@@ -76,11 +90,50 @@ async function updateGitHubIssue(input: UpdateGitHubIssueInput) {
 }
 
 export class Issue {
-  constructor(protected issue: GitHubIssue) {}
+  protected _organization?: EventOrganization;
+  protected _repository?: EventRepository;
+  protected _event?: IssuesEvent;
+  protected _didExist: boolean = true;
+  protected issue?: GitHubIssue;
+
+  constructor() {}
+
+  get labels() {
+    console.log(this.issue);
+    return this.issue?.labels?.items ?? [];
+  }
+
+  get id() {
+    return this.issue.id;
+  }
+
+  get assignees() {
+    return this.issue.assignees;
+  }
+
+  get organization() {
+    return this._organization;
+  }
+
+  get repository() {
+    return this._repository;
+  }
+
+  async close() {}
+
+  async reopen() {}
+
+  async refresh() {
+    this.issue = await getGitHubIssueFromWebhookEvent(this._event.issue);
+  }
 
   async assign(obj: User) {}
 
   async unassign(obj: User) {}
+
+  async label(l: Label) {
+    await l.connect(this);
+  }
 
   async attach(obj: Repository) {
     console.log(
@@ -93,6 +146,51 @@ export class Issue {
     return this;
   }
 
+  protected async backfillExistingIssue() {
+    const { assignees, labels } = this._event.issue;
+    for (const assignee of assignees) {
+      const user = await User.fromEvent(assignee);
+      this.assign(user);
+    }
+    for (const l of labels) {
+      const label = await Label.fromIssue(this, l);
+      this.label(label);
+    }
+  }
+
+  protected async init() {
+    const { action } = this._event;
+    if (action !== "opened" && this._didExist === false) {
+      await this.backfillExistingIssue();
+    }
+    return this;
+  }
+
+  protected asPersisted(b: boolean = true) {
+    this._didExist = b;
+    return this;
+  }
+
+  protected withRecord(r: GitHubIssue) {
+    this.issue = r;
+    return this;
+  }
+
+  protected withRepository(r: EventRepository) {
+    this._repository = r;
+    return this;
+  }
+
+  protected withOrganization(o: EventOrganization) {
+    this._organization = o;
+    return this;
+  }
+
+  protected withEvent(e: IssuesEvent) {
+    this._event = e;
+    return this;
+  }
+
   protected async update(i: Omit<UpdateGitHubIssueInput, "id">) {
     const input: UpdateGitHubIssueInput = {
       id: this.issue.id,
@@ -101,20 +199,27 @@ export class Issue {
     this.issue = await updateGitHubIssue(input);
   }
 
-  static async fromEvent(e: EventIssue): Promise<Issue> {
-    try {
-      console.log(`Checking for Issue with ID: ${e.id}`);
-      let issue = await getGitHubIssueFromWebhookEvent(e);
-      if (issue === null) {
-        console.log(`Issue with ID: ${e.id} Not Found; Creating`);
+  static async fromEvent(event: IssuesEvent): Promise<Issue> {
+    // const gh = await octokit.request(`GET ${event.issue.url}`);
 
-        issue = await createGitHubIssueFromWebhookEvent(e);
-        console.log(`Issue with ID: ${e.id} Created`);
+    try {
+      let persisted = await getGitHubIssueFromWebhookEvent(event.issue);
+      const didExist = persisted !== null;
+
+      if (!didExist) {
+        persisted = await createGitHubIssueFromWebhookEvent(event.issue);
       }
-      console.log(`Issue with ID: ${e.id} Found; Returning`);
-      return new Issue(issue);
+
+      return new Issue()
+        .withEvent(event)
+        .withRepository(event.repository)
+        .withOrganization(event.organization)
+        .withRecord(persisted)
+        .asPersisted(didExist)
+        .init();
     } catch (err) {
       console.log(err);
+      throw err;
     }
   }
 }

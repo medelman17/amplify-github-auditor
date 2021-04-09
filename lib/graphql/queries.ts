@@ -50,6 +50,22 @@ export const getGitHubIssue = /* GraphQL */ `
       }
       labels {
         nextToken
+        items {
+          id
+          dateFrom
+          dateTo
+          label {
+            id
+            createdAt
+            updatedAt
+            nodeId
+            description
+            apiUrl
+            name
+            color
+            default
+          }
+        }
       }
     }
   }
@@ -87,12 +103,19 @@ export const getGitHubLabel = /* GraphQL */ `
       id
       createdAt
       updatedAt
+      nodeId
+      description
       apiUrl
       name
       color
       default
       issues {
         nextToken
+        items {
+          issue {
+            id
+          }
+        }
       }
     }
   }
@@ -108,6 +131,8 @@ export const listGitHubLabels = /* GraphQL */ `
         id
         createdAt
         updatedAt
+        nodeId
+        description
         apiUrl
         name
         color
@@ -147,6 +172,8 @@ export const getGitHubLabelIssueConnection = /* GraphQL */ `
         id
         createdAt
         updatedAt
+        nodeId
+        description
         apiUrl
         name
         color

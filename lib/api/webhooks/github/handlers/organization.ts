@@ -5,5 +5,5 @@ export const organizationEventHandler: HandlerFunction<
   "organization",
   unknown
 > = async ({ payload }) => {
-  const sender = await Models.User.fromEvent(payload.sender);
+  // const sender = await Models.User.fromEvent(payload.sender);
 };

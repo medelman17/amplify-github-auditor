@@ -5,5 +5,5 @@ export const prReviewRequestEventHandler: HandlerFunction<
   "pull_request_review",
   unknown
 > = async ({ payload }) => {
-  const sender = await Models.User.fromEvent(payload.sender);
+  // const sender = await Models.User.fromEvent(payload.sender);
 };

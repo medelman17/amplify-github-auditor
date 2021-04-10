@@ -3,6 +3,8 @@ import {
   IssuesEvent,
   Repository as EventRepository,
   Organization as EventOrganization,
+  IssueCommentCreatedEvent,
+  IssueCommentEvent,
 } from "@octokit/webhooks-definitions/schema";
 import {
   EmitterWebhookEvent,
@@ -37,6 +39,8 @@ import {
 import { User } from "./User";
 import { Label } from "./Label";
 import { Octokit } from "@octokit/core";
+import { createIssueAsignee } from "@/graphql/mutations";
+import { IssueComment } from "./IssueComment";
 
 const octokit = new Octokit({ auth: process.env.GITHUB_ACCESS_TOKEN });
 
@@ -48,6 +52,17 @@ async function getGitHubIssueFromWebhookEvent(e: EventIssue) {
       graphqlOperation(queries.getGitHubIssue, { id: e.id.toString() })
     )) as GraphQLResult<GetGitHubIssueQuery>;
     return result.data.getGitHubIssue;
+  } catch (err) {
+    console.log(err);
+  }
+}
+
+async function createGitHubIssue(input: CreateGitHubIssueInput) {
+  try {
+    const result = (await API.graphql(
+      graphqlOperation(mutations.createGitHubIssue, { input })
+    )) as GraphQLResult<CreateGitHubIssueMutation>;
+    return result.data.createGitHubIssue;
   } catch (err) {
     console.log(err);
   }
@@ -84,6 +99,28 @@ async function updateGitHubIssue(input: UpdateGitHubIssueInput) {
       graphqlOperation(mutations.updateGitHubIssue, { input })
     )) as GraphQLResult<UpdateGitHubIssueMutation>;
     return result.data.updateGitHubIssue;
+  } catch (err) {
+    console.log(err);
+  }
+}
+
+async function createGitHubIssueAssignee(input: CreateIssueAsigneeInput) {
+  try {
+    const result = (await API.graphql(
+      graphqlOperation(mutations.createIssueAsignee, { input })
+    )) as GraphQLResult<CreateIssueAsigneeMutation>;
+    return result.data.createIssueAsignee;
+  } catch (err) {
+    console.log(err);
+  }
+}
+
+async function updateGitHubIssueAssignee(input: UpdateIssueAsigneeInput) {
+  try {
+    const result = (await API.graphql(
+      graphqlOperation(mutations.updateIssueAsignee, { input })
+    )) as GraphQLResult<UpdateIssueAsigneeMutation>;
+    return result.data.updateIssueAsignee;
   } catch (err) {
     console.log(err);
   }
@@ -127,7 +164,16 @@ export class Issue {
     this.issue = await getGitHubIssueFromWebhookEvent(this._event.issue);
   }
 
-  async assign(obj: User) {}
+  async getComments() {}
+
+  async assign(obj: User) {
+    const result = await createGitHubIssueAssignee({
+      userId: obj.id,
+      issueId: this.issue.id,
+      dateFrom: new Date(Date.now()).toISOString(),
+    });
+    await this.refresh();
+  }
 
   async unassign(obj: User) {}
 
@@ -159,8 +205,11 @@ export class Issue {
   }
 
   protected async init() {
-    const { action } = this._event;
-    if (action !== "opened" && this._didExist === false) {
+    if (
+      this._event &&
+      this._event.action !== "opened" &&
+      this._didExist === false
+    ) {
       await this.backfillExistingIssue();
     }
     return this;
@@ -197,6 +246,66 @@ export class Issue {
       ...i,
     };
     this.issue = await updateGitHubIssue(input);
+  }
+
+  static async getComments(url: string) {
+    try {
+      return await octokit.request(`GET ${url}`);
+    } catch (err) {
+      console.log(err);
+      throw err;
+    }
+  }
+
+  static async fromComment(e: IssueCommentEvent): Promise<Issue> {
+    const issue = e.issue as EventIssue;
+    try {
+      let persisted = await getGitHubIssueFromWebhookEvent(issue);
+      const didExist = persisted !== null;
+      if (!didExist) {
+        const apiResult = await octokit.request(
+          "GET /repos/{owner}/{repo}/issues/{issue_number}",
+          {
+            owner: e.organization.login,
+            repo: e.repository.name,
+            issue_number: issue.number,
+          }
+        );
+
+        const comments = await Issue.getComments(e.issue.comments_url);
+
+        persisted = await createGitHubIssue({
+          id: apiResult.data.id.toString(),
+          nodeId: apiResult.data.node_id,
+          title: apiResult.data.title,
+          apiUrl: apiResult.data.url,
+          htmlUrl: issue.html_url,
+          body: issue.body,
+          number: issue.number,
+          locked: issue.locked,
+          state:
+            issue.state === "closed"
+              ? GitHubIssueState.CLOSED
+              : GitHubIssueState.OPEN,
+          authorId: issue.user.id.toString(),
+          repositoryId: e.repository.id.toString(),
+        });
+
+        for (const comment of comments.data) {
+          const c = await IssueComment.fromApiResponse(comment);
+        }
+      }
+
+      return new Issue()
+        .withRepository(e.repository)
+        .withOrganization(e.organization)
+        .withRecord(persisted)
+        .asPersisted(didExist)
+        .init();
+    } catch (err) {
+      console.log(err);
+      throw err;
+    }
   }
 
   static async fromEvent(event: IssuesEvent): Promise<Issue> {

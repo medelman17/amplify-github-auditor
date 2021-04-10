@@ -69,6 +69,10 @@ export function isEventUser(u: any): u is EventUser {
 export class User {
   constructor(protected user: GitHubUser) {}
 
+  get id() {
+    return this.user.id;
+  }
+
   static async fromEvent(e: EventUser): Promise<User> {
     try {
       let user = await getGitHubUserFromWebhookEvent(e);
